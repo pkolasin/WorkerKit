@@ -27,7 +27,7 @@ public static class HostConfigurationNotes
 
             - `--instance-dir <path>`, or `{identity.InstanceDirectoryVariable}`.
             - `--instance <name>`, or `{identity.InstanceVariable}`. With no directory, the directory is `{identity.InstancesRootVariable}/<name>`.
-            - `{identity.InstancesRootVariable}` defaults to `%ProgramData%\\{identity.Name}\\instances` on Windows and `{identity.LinuxInstancesRoot}` on Linux.
+            - `{identity.InstancesRootVariable}` defaults to `%ProgramData%\{identity.Name}\instances` on Windows and `{identity.LinuxInstancesRoot}` on Linux.
             - With nothing set, the instance is `default` and its directory is the install directory.
             """;
     }
