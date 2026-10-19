@@ -1,0 +1,11 @@
+bin/
+obj/
+logs/
+data/
+temp/
+TestResults/
+.vs/
+.idea/
+.vscode/
+*.user
+artifacts/
