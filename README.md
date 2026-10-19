@@ -89,14 +89,14 @@ The image is multi-stage, runs as the runtime image's built-in user `app` (`USER
 
 ```bash
 docker run --rm -v worker-instance:/instance workerkit-example run
-docker run --rm -v D:\\ws\\instance:/instance -e WORKERKITEXAMPLE_INSTANCE=east workerkit-example run
+docker run --rm -v D:\ws\instance:/instance -e WORKERKITEXAMPLE_INSTANCE=east workerkit-example run
 ```
 
 A named volume inherits the image ownership (uid 1654). A bind mount keeps the host directory's ownership, so that directory has to be writable by uid 1654. One container is one instance. The `run` lock also stops two containers from sharing a volume on a local disk; `flock` is not reliable on SMB or NFS. `docker run workerkit-example check-config` overrides the image `CMD` and prints the instance directory.
 
 ### Windows Service and systemd
 
-`dotnet publish` writes `workerkit.app.json` and `deploy/` next to the app. The scripts read every name from that file. For this example the service is `WorkerKitExample`, the Windows install path is `C:\\Program Files\\WorkerKitExample`, and the Linux install path is `/opt/worker-kit-example`. Install, update, uninstall, `-HealthListenUrl`, and the virtual-account URL reservation are in [doc/deploy.md](doc/deploy.md). `-p:WorkerKitDeployScripts=false` skips the copy.
+`dotnet publish` writes `workerkit.app.json` and `deploy/` next to the app. The scripts read every name from that file. For this example the service is `WorkerKitExample`, the Windows install path is `C:\Program Files\WorkerKitExample`, and the Linux install path is `/opt/worker-kit-example`. Install, update, uninstall, `-HealthListenUrl`, and the virtual-account URL reservation are in [doc/deploy.md](doc/deploy.md). `-p:WorkerKitDeployScripts=false` skips the copy.
 
 `AddWindowsService` registers the SCM lifetime when the process is started by the Service Control Manager. The binary path includes `run`. With no command the executable also starts the host. The Windows service name is `WorkerKitExample` for instance `default` and `WorkerKitExample-<name>` otherwise.
 
@@ -129,10 +129,10 @@ The content root is always the install directory (`AppContext.BaseDirectory`, or
 
 ## Instances
 
-One install directory can run several processes. The instance directory holds that process's `appsettings.json`, logs, data, and temp files. Names come from the application identity (`WorkerAppIdentity`), derived from the entry assembly: product name, service name, environment prefix, version, and the default instance roots. This host's product is `WorkerKitExample`, so the prefix is `WORKERKITEXAMPLE`, the Windows root is `%ProgramData%\\WorkerKitExample\\instances`, the Linux root is `/var/lib/worker-kit-example`, and the service is `WorkerKitExample` (named instances `WorkerKitExample-<name>`). An explicit override replaces the name, service name, or prefix. Publish writes the same values into `workerkit.app.json`, and the deploy scripts read that file. Resolution happens before the host is built:
+One install directory can run several processes. The instance directory holds that process's `appsettings.json`, logs, data, and temp files. Names come from the application identity (`WorkerAppIdentity`), derived from the entry assembly: product name, service name, environment prefix, version, and the default instance roots. This host's product is `WorkerKitExample`, so the prefix is `WORKERKITEXAMPLE`, the Windows root is `%ProgramData%\WorkerKitExample\instances`, the Linux root is `/var/lib/worker-kit-example`, and the service is `WorkerKitExample` (named instances `WorkerKitExample-<name>`). An explicit override replaces the name, service name, or prefix. Publish writes the same values into `workerkit.app.json`, and the deploy scripts read that file. Resolution happens before the host is built:
 
 1. `--instance-dir`, otherwise `WORKERKITEXAMPLE_INSTANCE_DIR`
-2. otherwise `--instance` or `WORKERKITEXAMPLE_INSTANCE`, under `WORKERKITEXAMPLE_INSTANCES_ROOT` (default `%ProgramData%\\WorkerKitExample\\instances` or `/var/lib/worker-kit-example`)
+2. otherwise `--instance` or `WORKERKITEXAMPLE_INSTANCE`, under `WORKERKITEXAMPLE_INSTANCES_ROOT` (default `%ProgramData%\WorkerKitExample\instances` or `/var/lib/worker-kit-example`)
 3. otherwise instance `default`, whose directory is the install directory
 
 The instance name is `--instance` or `WORKERKITEXAMPLE_INSTANCE`, otherwise the directory name, otherwise `default`. It must match `^[a-z0-9][a-z0-9-]{0,39}$`. Relative `LogFile:Path`, `Instance:DataDirectory`, and `Instance:TempDirectory` resolve against the instance directory. Absolute paths stay absolute. `Instance:CleanTempOnStart` (default true) deletes children of the temp directory on startup and refuses when that path is, or contains, the instance directory, the install directory, or the data directory.
@@ -296,7 +296,7 @@ Set `Health:ListenUrl` to an `http://` prefix that ends with `/` and listens on 
 
 The body is JSON: `status`, `instance`, `version`, and `entries` (`status`, `description`, `data`, `duration`). Liveness and the combined report return `200` for Healthy and Degraded, and `503` for Unhealthy, so a Degraded iteration does not look like a dead process. Readiness returns `503` for Degraded and Unhealthy. `check-config` prints the three URLs and the grace settings.
 
-On Windows the listener uses HTTP.sys. The URL namespace is closed until an administrator reserves a prefix, and that rule includes `http://127.0.0.1:port/` ([Namespace reservations](https://learn.microsoft.com/en-us/windows/win32/http/namespace-reservations-registrations-and-routing)). `install-service.ps1 -HealthListenUrl` stores the normalized prefix in that `Health:ListenUrl` for every account, including LocalSystem. The script adds the HTTP.sys reservation only when `-ServiceAccount` is an account other than LocalSystem, using that prefix. A virtual account is `NT SERVICE\\<ServiceName>`. The commands are in [doc/deploy.md](doc/deploy.md). Linux and Docker do not use HTTP.sys.
+On Windows the listener uses HTTP.sys. The URL namespace is closed until an administrator reserves a prefix, and that rule includes `http://127.0.0.1:port/` ([Namespace reservations](https://learn.microsoft.com/en-us/windows/win32/http/namespace-reservations-registrations-and-routing)). `install-service.ps1 -HealthListenUrl` stores the normalized prefix in that `Health:ListenUrl` for every account, including LocalSystem. The script adds the HTTP.sys reservation only when `-ServiceAccount` is an account other than LocalSystem, using that prefix. A virtual account is `NT SERVICE\<ServiceName>`. The commands are in [doc/deploy.md](doc/deploy.md). Linux and Docker do not use HTTP.sys.
 
 `LoggingHealthCheckPublisher` still logs each report. `MetricsHealthCheckPublisher` stores it for the `worker.health.status` gauge (0 unhealthy, 1 degraded, 2 healthy) so the same result is visible through OTLP without opening the listen port.
 
