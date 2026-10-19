@@ -109,3 +109,4 @@ Instance options and `--telemetry` are recursive on the root command, so every c
 - `--instance <name>`, or `WORKERKITEXAMPLE_INSTANCE`. With no directory, the directory is `WORKERKITEXAMPLE_INSTANCES_ROOT/<name>`.
 - `WORKERKITEXAMPLE_INSTANCES_ROOT` defaults to `%ProgramData%\WorkerKitExample\instances` on Windows and `/var/lib/worker-kit-example` on Linux.
 - With nothing set, the instance is `default` and its directory is the install directory.
+
