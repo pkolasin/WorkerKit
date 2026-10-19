@@ -1,0 +1,9 @@
+global using System.ComponentModel.DataAnnotations;
+global using Microsoft.Extensions.Options;
+global using WorkerKit.Abstractions.Commands;
+global using WorkerKit.Abstractions.Options;
+global using WorkerKit.Hosting;
+global using WorkerKit.Hosting.Cli;
+global using WorkerKit.Hosting.DependencyInjection;
+global using WorkerKit.Hosting.Http;
+global using WorkerKit.Hosting.Workers;
