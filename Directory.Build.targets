@@ -1,0 +1,42 @@
+<Project>
+  <!-- Packable libraries share one version. The example host keeps 1.0.0 from Directory.Build.props.
+       0.1.1 is newer than any locally packed 0.1.0, so a NuGet cache entry from an older checkout cannot satisfy this version. -->
+  <PropertyGroup Condition="'$(IsPackable)' == 'true'">
+    <Version>0.1.1</Version>
+    <InformationalVersion>0.1.1</InformationalVersion>
+    <PackageId>$(AssemblyName)</PackageId>
+    <Authors>WorkerKit</Authors>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <!-- SourceLink still records the commit from this git checkout. -->
+    <RepositoryUrl>https://github.com/pkolasin/WorkerKit</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>https://github.com/pkolasin/WorkerKit</PackageProjectUrl>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SymbolPackageFormat Condition="'$(SymbolPackageFormat)' == ''">snupkg</SymbolPackageFormat>
+    <DebugType>portable</DebugType>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true' OR '$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
+    <!-- A project can set these to false. The template package has no assembly to validate or symbolicate. -->
+    <EnablePackageValidation Condition="'$(EnablePackageValidation)' == ''">true</EnablePackageValidation>
+    <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(IsPackable)' == 'true'">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers" PrivateAssets="all" Condition="'$(WorkerKitPublicApiAnalyzers)' != 'false'" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <!-- ProjectReference does not import a package's build/ targets. Exe projects in this repo import the same file a PackageReference would. -->
+  <Import Project="$(MSBuildThisFileDirectory)src/WorkerKit.Hosting/build/WorkerKit.Hosting.targets"
+          Condition="('$(OutputType)' == 'Exe' or '$(OutputType)' == 'exe' or '$(OutputType)' == 'WinExe') and Exists('$(MSBuildThisFileDirectory)src/WorkerKit.Hosting/build/WorkerKit.Hosting.targets')" />
+
+  <!-- In-repo builds use ProjectReference. A PackageReference to WorkerKit.* would compile against a cached nupkg instead. -->
+  <Target Name="RejectCachedWorkerKitPackages" BeforeTargets="CoreCompile">
+    <ItemGroup>
+      <_CachedWorkerKit Include="@(ReferencePath)" Condition="$([System.String]::Copy('%(ReferencePath.NuGetPackageId)').StartsWith('WorkerKit.')) and '%(ReferencePath.ReferenceSourceTarget)' != 'ProjectReference'" />
+    </ItemGroup>
+    <Error Condition="'@(_CachedWorkerKit)' != ''" Text="Compile WorkerKit from this checkout with ProjectReference. NuGet resolved %(_CachedWorkerKit.NuGetPackageId) %(_CachedWorkerKit.NuGetPackageVersion) from '%(_CachedWorkerKit.Identity)'." />
+  </Target>
+</Project>
