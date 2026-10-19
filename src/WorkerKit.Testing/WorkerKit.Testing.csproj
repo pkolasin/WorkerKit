@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
+    <TargetFramework></TargetFramework>
+    <IsPackable>true</IsPackable>
+    <IsAotCompatible>true</IsAotCompatible>
+    <RootNamespace>WorkerKit.Testing</RootNamespace>
+    <Description>Test helpers for a WorkerKit connector. No xUnit, NUnit, or MSTest dependency.</Description>
+    <PackageDescription>Test helpers for a WorkerKit connector: an in-process host, one worker iteration or queue batch, and CLI capture. Assertion failures throw WorkerKitAssertException. No xUnit, NUnit, or MSTest dependency.</PackageDescription>
+    <PackageTags>workerkit;testing</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WorkerKit.Hosting\WorkerKit.Hosting.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- FakeTimeProvider is part of the public API (WorkerAppTester.Time). Compile assets must flow to consumers. -->
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing">
+      <PrivateAssets>none</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+</Project>
