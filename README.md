@@ -1,5 +1,7 @@
 # WorkerKit
 
+Repository: https://github.com/pkolasin/WorkerKit
+
 Generic host for data connectors and processing workers. One program runs as a console app, in Docker, as a Windows Service, and as a systemd service (`Type=notify`). It includes DI, layered configuration, structured file logging (Serilog), `IHttpClientFactory` with resilience (retry, timeout, circuit breaker), and CLI commands over the same container. The samples under `samples/` are not part of the packages: an EU VIES SOAP VAT check, an Open-Meteo REST worker, a VIES queue worker, and an outbound MQTT and SMS queue. Copy the host with `dotnet new`, then replace those samples.
 
 ## Layout
@@ -34,9 +36,17 @@ Library namespaces match the folder under `WorkerKit.*`. The host root namespace
 - For the container image: Docker and the `mcr.microsoft.com/dotnet/sdk:10.0` / `runtime:10.0` images
 - For the VIES regeneration script only: `dotnet-svcutil` 8.0.0, which runs on the .NET 9 runtime. The build does not need it.
 
+## Packages and versions
+
+The packages are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Testing, and WorkerKit.Templates. `src/ExampleHost` and `samples/` are not packed.
+
+`dotnet pack` on a workstation, and the CI workflow, produce `0.1.1-dev.<build>`. Locally `<build>` is `local` unless `WorkerKitBuildNumber` is set. On GitHub Actions it is the workflow run number. The assembly informational version of those packs stays `0.1.1`.
+
+A version with no `-dev` suffix is packed only by [`.github/workflows/release.yml`](.github/workflows/release.yml), from the tag of a published GitHub Release. The first release tag is `v0.1.0-preview.1`, which packs `0.1.0-preview.1` and publishes the five packages and their symbol packages to nuget.org.
+
 ## Create a connector
 
-Pack the template (the package version is the default `--workerkit-version`), install that nupkg, and generate a connector. The example host in this repository is not the template.
+Pack the template (that package version becomes the default `--workerkit-version`), install that nupkg, and generate a connector. The example host in this repository is not the template.
 
 ```bash
 dotnet pack src/WorkerKit.Templates/WorkerKit.Templates.csproj -c Release -o artifacts/packages

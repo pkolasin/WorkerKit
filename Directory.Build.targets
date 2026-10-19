@@ -1,8 +1,13 @@
 <Project>
   <!-- Packable libraries share one version. The example host keeps 1.0.0 from Directory.Build.props.
-       0.1.1 is newer than any locally packed 0.1.0, so a NuGet cache entry from an older checkout cannot satisfy this version. -->
+       Local and CI packs are prereleases. A clean version is passed only by .github/workflows/release.yml
+       (-p:Version and -p:InformationalVersion from the git tag). A command-line Version is a global
+       property, so those release properties and the template tests' -p:Version are left as given.
+       InformationalVersion stays 0.1.1 for dev packs; telemetry tests read that assembly version. -->
   <PropertyGroup Condition="'$(IsPackable)' == 'true'">
-    <Version>0.1.1</Version>
+    <WorkerKitBuildNumber Condition="'$(WorkerKitBuildNumber)' == ''">$(GITHUB_RUN_NUMBER)</WorkerKitBuildNumber>
+    <WorkerKitBuildNumber Condition="'$(WorkerKitBuildNumber)' == ''">local</WorkerKitBuildNumber>
+    <Version>0.1.1-dev.$(WorkerKitBuildNumber)</Version>
     <InformationalVersion>0.1.1</InformationalVersion>
     <PackageId>$(AssemblyName)</PackageId>
     <Authors>WorkerKit</Authors>

@@ -1,0 +1,66 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  nuget:
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+      - name: Read version from the tag
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${GITHUB_REF_NAME}"
+          version="${tag#v}"
+          if [[ ! "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "Ref '${tag}' is not a NuGet version. Expected v<major>.<minor>.<patch> with an optional prerelease, for example v0.1.0-preview.1." >&2
+            exit 1
+          fi
+          echo "version=${version}" >> "${GITHUB_OUTPUT}"
+      - name: Pack
+        shell: bash
+        run: |
+          set -euo pipefail
+          version="${{ steps.version.outputs.version }}"
+          mkdir -p artifacts/packages
+          projects=(
+            src/WorkerKit.Abstractions/WorkerKit.Abstractions.csproj
+            src/WorkerKit.Hosting/WorkerKit.Hosting.csproj
+            src/WorkerKit.Soap/WorkerKit.Soap.csproj
+            src/WorkerKit.Testing/WorkerKit.Testing.csproj
+            src/WorkerKit.Templates/WorkerKit.Templates.csproj
+          )
+          for project in "${projects[@]}"; do
+            dotnet pack "${project}" -c Release -o artifacts/packages --nologo -warnaserror \
+              -p:Version="${version}" \
+              -p:InformationalVersion="${version}" \
+              -p:ContinuousIntegrationBuild=true
+          done
+      - uses: NuGet/login@v1
+        id: login
+        with:
+          user: pkolasin
+      - name: Push packages and symbols
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet nuget push artifacts/packages/*.nupkg \
+            --source https://api.nuget.org/v3/index.json \
+            --api-key "${{ steps.login.outputs.NUGET_API_KEY }}" \
+            --skip-duplicate
