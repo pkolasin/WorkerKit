@@ -1,0 +1,36 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{json,yml,yaml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{csproj,props,targets,xml,wsdl}]
+indent_size = 2
+
+[*.cs]
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_prefer_braces = true:warning
+dotnet_sort_system_directives_first = true
+dotnet_style_qualification_for_field = false:suggestion
+dotnet_style_qualification_for_property = false:suggestion
+# Folder namespaces. Severity stays suggestion: the .NET SDK leaves EnforceCodeStyleInBuild
+# false, so dotnet build does not run IDE0130. Warning would be enforced by TreatWarningsAsErrors
+# only after that property is set to true.
+dotnet_style_namespace_match_folder = true
+dotnet_diagnostic.IDE0130.severity = suggestion
+
+# Checked-in svcutil output. Do not restyle it.
+[samples/Vies/Generated/**.cs]
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
+charset = utf-8
