@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
+    <TargetFramework></TargetFramework>
+    <IsPackable>true</IsPackable>
+    <RootNamespace>WorkerKit.Soap</RootNamespace>
+    <Description>Generic WCF SOAP channel helpers for WorkerKit. Generated service clients stay in the connector.</Description>
+    <PackageDescription>Generic WCF SOAP channel helpers for WorkerKit. Generated service clients stay in the connector.</PackageDescription>
+    <PackageTags>workerkit;soap;wcf</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- 10.x selects an empty netcoreapp2.0 ref for net8, so net8 uses the 8.1 line. -->
+    <PackageReference Include="System.ServiceModel.Http" Condition="'$(TargetFramework)' == 'net10.0'" />
+    <PackageReference Include="System.ServiceModel.Http" VersionOverride="8.1.2" Condition="'$(TargetFramework)' == 'net8.0'" />
+    <!-- WCF pulls vulnerable 10.0.0 cryptography packages. Pin the patched releases. -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+    <PackageReference Include="System.Security.Cryptography.Xml" />
+  </ItemGroup>
+</Project>
