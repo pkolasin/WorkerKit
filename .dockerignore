@@ -1,0 +1,16 @@
+.git
+.github
+.vs
+.idea
+.vscode
+**/.git
+**/bin
+**/obj
+**/logs
+**/TestResults
+**/*.user
+**/*.md
+tests
+deploy
+.template.config
+.soapgen
