@@ -1,0 +1,102 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>true</IsPackable>
+    <PackageType>Template</PackageType>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <ContentTargetFolders>content</ContentTargetFolders>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+    <DefaultItemExcludes></DefaultItemExcludes>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <EnablePackageValidation>false</EnablePackageValidation>
+    <IncludeSymbols>false</IncludeSymbols>
+    <WorkerKitPublicApiAnalyzers>false</WorkerKitPublicApiAnalyzers>
+    <Description>dotnet new template for a WorkerKit connector.</Description>
+    <PackageDescription>dotnet new template for a WorkerKit connector. Generates a host, a sample periodic worker, a command, tests, and optional Docker and queue files.</PackageDescription>
+    <PackageTags>workerkit;template;dotnet-new</PackageTags>
+    <!-- Template content is not a NuGet tools/ or build/ script. -->
+    <NoWarn>$(NoWarn);NU5128;NU5110;NU5111</NoWarn>
+  </PropertyGroup>
+
+  <UsingTask TaskName="StampWorkerKitTemplate" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <SourceDirectory ParameterType="System.String" Required="true" />
+      <DestinationDirectory ParameterType="System.String" Required="true" />
+      <Version ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Class" Language="cs"><![CDATA[
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+using System.IO;
+
+public class StampWorkerKitTemplate : Task
+{
+    [Required] public string SourceDirectory { get; set; }
+    [Required] public string DestinationDirectory { get; set; }
+    [Required] public string Version { get; set; }
+
+    public override bool Execute()
+    {
+        if (string.IsNullOrWhiteSpace(Version))
+        {
+            Log.LogError("WorkerKit template version is empty.");
+            return false;
+        }
+
+        if (Directory.Exists(DestinationDirectory))
+        {
+            Directory.Delete(DestinationDirectory, true);
+        }
+
+        CopyAll(SourceDirectory, DestinationDirectory);
+        var templateJson = Path.Combine(DestinationDirectory, "workerkit-connector", ".template.config", "template.json");
+        if (!File.Exists(templateJson))
+        {
+            Log.LogError("Template config was not copied to '" + templateJson + "'.");
+            return false;
+        }
+
+        var text = File.ReadAllText(templateJson);
+        const string token = "__WORKERKIT_VERSION__";
+        if (text.IndexOf(token, System.StringComparison.Ordinal) < 0)
+        {
+            Log.LogError("Version token " + token + " was not found in " + templateJson);
+            return false;
+        }
+
+        File.WriteAllText(templateJson, text.Replace(token, Version.Trim()));
+        return true;
+    }
+
+    private static void CopyAll(string source, string destination)
+    {
+        Directory.CreateDirectory(destination);
+        foreach (var directory in Directory.GetDirectories(source))
+        {
+            CopyAll(directory, Path.Combine(destination, Path.GetFileName(directory)));
+        }
+
+        foreach (var file in Directory.GetFiles(source))
+        {
+            File.Copy(file, Path.Combine(destination, Path.GetFileName(file)), true);
+        }
+    }
+}
+]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="StampTemplateContent" BeforeTargets="_GetPackageFiles">
+    <StampWorkerKitTemplate SourceDirectory="$(MSBuildProjectDirectory)/content" DestinationDirectory="$(IntermediateOutputPath)template-content" Version="$(Version)" />
+    <ItemGroup>
+      <_StampedTemplate Include="$(IntermediateOutputPath)template-content/**/*" />
+      <None Include="@(_StampedTemplate)" Pack="true" PackagePath="content" />
+    </ItemGroup>
+  </Target>
+</Project>
