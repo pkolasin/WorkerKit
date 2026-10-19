@@ -1,0 +1,238 @@
+#nullable enable
+WorkerKit.Abstractions.Commands.CommandArgument<T>
+WorkerKit.Abstractions.Commands.CommandArgument<T>.CommandArgument(string! name, string! description) -> void
+WorkerKit.Abstractions.Commands.CommandArgument<T>.Required.get -> bool
+WorkerKit.Abstractions.Commands.CommandArgument<T>.Required.init -> void
+WorkerKit.Abstractions.Commands.CommandOption<T>
+WorkerKit.Abstractions.Commands.CommandOption<T>.Aliases.get -> System.Collections.Generic.IReadOnlyList<string!>!
+WorkerKit.Abstractions.Commands.CommandOption<T>.Aliases.init -> void
+WorkerKit.Abstractions.Commands.CommandOption<T>.CommandOption(string! name, string! description) -> void
+WorkerKit.Abstractions.Commands.CommandOption<T>.Required.get -> bool
+WorkerKit.Abstractions.Commands.CommandOption<T>.Required.init -> void
+WorkerKit.Abstractions.Commands.CommandParameter
+WorkerKit.Abstractions.Commands.CommandParameter.CommandParameter(string! name, string! description) -> void
+WorkerKit.Abstractions.Commands.CommandParameter.Description.get -> string!
+WorkerKit.Abstractions.Commands.CommandParameter.Name.get -> string!
+WorkerKit.Abstractions.Commands.CommandSpec
+WorkerKit.Abstractions.Commands.CommandSpec.Add<T>(WorkerKit.Abstractions.Commands.CommandArgument<T>! argument) -> void
+WorkerKit.Abstractions.Commands.CommandSpec.Add<T>(WorkerKit.Abstractions.Commands.CommandOption<T>! option) -> void
+WorkerKit.Abstractions.Commands.CommandSpec.Aliases.get -> System.Collections.Generic.IReadOnlyList<string!>!
+WorkerKit.Abstractions.Commands.CommandSpec.Aliases.init -> void
+WorkerKit.Abstractions.Commands.CommandSpec.CommandSpec(string! name, string! description, params string![]! aliases) -> void
+WorkerKit.Abstractions.Commands.CommandSpec.Description.get -> string!
+WorkerKit.Abstractions.Commands.CommandSpec.Name.get -> string!
+WorkerKit.Abstractions.Commands.CommandValue<T>
+WorkerKit.Abstractions.Commands.CommandValue<T>.CommandValue(string! name, string! description) -> void
+WorkerKit.Abstractions.Commands.CommandValue<T>.DefaultFactory.get -> System.Func<T>?
+WorkerKit.Abstractions.Commands.CommandValue<T>.DefaultFactory.init -> void
+WorkerKit.Abstractions.Commands.CommandValue<T>.DefaultValue.get -> T?
+WorkerKit.Abstractions.Commands.CommandValue<T>.DefaultValue.init -> void
+WorkerKit.Abstractions.Commands.CommandValue<T>.HasDefault.get -> bool
+WorkerKit.Abstractions.Commands.CommandValue<T>.TryGetDefault(out T value) -> bool
+WorkerKit.Abstractions.Commands.EnumArrayCommandArgument<TEnum>
+WorkerKit.Abstractions.Commands.EnumArrayCommandArgument<TEnum>.EnumArrayCommandArgument(string! name, string! description) -> void
+WorkerKit.Abstractions.Commands.EnumArrayCommandOption<TEnum>
+WorkerKit.Abstractions.Commands.EnumArrayCommandOption<TEnum>.EnumArrayCommandOption(string! name, string! description) -> void
+WorkerKit.Abstractions.Commands.EnumCommandArgument<TEnum>
+WorkerKit.Abstractions.Commands.EnumCommandArgument<TEnum>.EnumCommandArgument(string! name, string! description) -> void
+WorkerKit.Abstractions.Commands.EnumCommandOption<TEnum>
+WorkerKit.Abstractions.Commands.EnumCommandOption<TEnum>.EnumCommandOption(string! name, string! description) -> void
+WorkerKit.Abstractions.Commands.ICommandArgs
+WorkerKit.Abstractions.Commands.ICommandArgs.Get<T>(WorkerKit.Abstractions.Commands.CommandArgument<T>! argument) -> T
+WorkerKit.Abstractions.Commands.ICommandArgs.Get<T>(WorkerKit.Abstractions.Commands.CommandOption<T>! option) -> T
+WorkerKit.Abstractions.Commands.ICommandArgs.IsSet<T>(WorkerKit.Abstractions.Commands.CommandOption<T>! option) -> bool
+WorkerKit.Abstractions.Commands.IWorkerCommand
+WorkerKit.Abstractions.Commands.IWorkerCommand.EnableTelemetry.get -> bool
+WorkerKit.Abstractions.Commands.IWorkerCommand.ExecuteAsync(WorkerKit.Abstractions.Commands.ICommandArgs! args, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+WorkerKit.Abstractions.Commands.IWorkerCommand.Spec.get -> WorkerKit.Abstractions.Commands.CommandSpec!
+WorkerKit.Abstractions.Commands.IWorkerCommand.ValidateOptions.get -> bool
+WorkerKit.Abstractions.Data.IDbConnectionFactory
+WorkerKit.Abstractions.Data.IDbConnectionFactory.OpenConnectionAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<System.Data.Common.DbConnection!>
+WorkerKit.Abstractions.Identity.WorkerAppIdentity
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.<Clone>$() -> WorkerKit.Abstractions.Identity.WorkerAppIdentity!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.ApplicationAssembly.get -> System.Reflection.Assembly!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.DefaultInstancesRoot.get -> string!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.EnvPrefix.get -> string!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.Equals(WorkerKit.Abstractions.Identity.WorkerAppIdentity? other) -> bool
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.InstanceDirectoryVariable.get -> string!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.InstanceVariable.get -> string!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.InstancesRootVariable.get -> string!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.LinuxInstancesRoot.get -> string!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.Name.get -> string!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.ServiceName.get -> string!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.ServiceNameFor(string! instanceName) -> string!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.Version.get -> string!
+WorkerKit.Abstractions.Identity.WorkerAppIdentity.WindowsInstancesRoot.get -> string!
+WorkerKit.Abstractions.Instances.IInstanceContext
+WorkerKit.Abstractions.Instances.IInstanceContext.DataDirectory.get -> string!
+WorkerKit.Abstractions.Instances.IInstanceContext.InstallDirectory.get -> string!
+WorkerKit.Abstractions.Instances.IInstanceContext.InstanceDirectory.get -> string!
+WorkerKit.Abstractions.Instances.IInstanceContext.InstanceName.get -> string!
+WorkerKit.Abstractions.Instances.IInstanceContext.LogDirectory.get -> string!
+WorkerKit.Abstractions.Instances.IInstanceContext.ResolvePath(string! path) -> string!
+WorkerKit.Abstractions.Instances.IInstanceContext.TempDirectory.get -> string!
+WorkerKit.Abstractions.Options.DataOptions
+WorkerKit.Abstractions.Options.DataOptions.ConnectionString.get -> string!
+WorkerKit.Abstractions.Options.DataOptions.ConnectionString.set -> void
+WorkerKit.Abstractions.Options.DataOptions.DataOptions() -> void
+WorkerKit.Abstractions.Options.DataOptions.Provider.get -> string!
+WorkerKit.Abstractions.Options.DataOptions.Provider.set -> void
+WorkerKit.Abstractions.Options.HealthOptions
+WorkerKit.Abstractions.Options.HealthOptions.HealthOptions() -> void
+WorkerKit.Abstractions.Options.HealthOptions.HeartbeatGraceFor(System.TimeSpan interval) -> System.TimeSpan
+WorkerKit.Abstractions.Options.HealthOptions.HeartbeatGracePadding.get -> System.TimeSpan
+WorkerKit.Abstractions.Options.HealthOptions.HeartbeatGracePadding.set -> void
+WorkerKit.Abstractions.Options.HealthOptions.HeartbeatStaleMultiplier.get -> int
+WorkerKit.Abstractions.Options.HealthOptions.HeartbeatStaleMultiplier.set -> void
+WorkerKit.Abstractions.Options.HealthOptions.ListenUrl.get -> string!
+WorkerKit.Abstractions.Options.HealthOptions.ListenUrl.set -> void
+WorkerKit.Abstractions.Options.HealthOptions.PublisherPeriodSeconds.get -> int
+WorkerKit.Abstractions.Options.HealthOptions.PublisherPeriodSeconds.set -> void
+WorkerKit.Abstractions.Options.HttpClientEndpointOptions
+WorkerKit.Abstractions.Options.HttpClientEndpointOptions.BaseAddress.get -> string!
+WorkerKit.Abstractions.Options.HttpClientEndpointOptions.BaseAddress.set -> void
+WorkerKit.Abstractions.Options.HttpClientEndpointOptions.HttpClientEndpointOptions() -> void
+WorkerKit.Abstractions.Options.HttpClientEndpointOptions.Resilience.get -> WorkerKit.Abstractions.Options.HttpResilienceOptions!
+WorkerKit.Abstractions.Options.HttpClientEndpointOptions.Resilience.set -> void
+WorkerKit.Abstractions.Options.HttpClientEndpointOptions.UserAgent.get -> string!
+WorkerKit.Abstractions.Options.HttpClientEndpointOptions.UserAgent.set -> void
+WorkerKit.Abstractions.Options.HttpResilienceOptions
+WorkerKit.Abstractions.Options.HttpResilienceOptions.AttemptTimeoutSeconds.get -> int
+WorkerKit.Abstractions.Options.HttpResilienceOptions.AttemptTimeoutSeconds.set -> void
+WorkerKit.Abstractions.Options.HttpResilienceOptions.CircuitBreakerBreakDurationSeconds.get -> int
+WorkerKit.Abstractions.Options.HttpResilienceOptions.CircuitBreakerBreakDurationSeconds.set -> void
+WorkerKit.Abstractions.Options.HttpResilienceOptions.CircuitBreakerFailureRatio.get -> double
+WorkerKit.Abstractions.Options.HttpResilienceOptions.CircuitBreakerFailureRatio.set -> void
+WorkerKit.Abstractions.Options.HttpResilienceOptions.CircuitBreakerMinimumThroughput.get -> int
+WorkerKit.Abstractions.Options.HttpResilienceOptions.CircuitBreakerMinimumThroughput.set -> void
+WorkerKit.Abstractions.Options.HttpResilienceOptions.CircuitBreakerSamplingSeconds.get -> int
+WorkerKit.Abstractions.Options.HttpResilienceOptions.CircuitBreakerSamplingSeconds.set -> void
+WorkerKit.Abstractions.Options.HttpResilienceOptions.HttpResilienceOptions() -> void
+WorkerKit.Abstractions.Options.HttpResilienceOptions.MaxRetryAttempts.get -> int
+WorkerKit.Abstractions.Options.HttpResilienceOptions.MaxRetryAttempts.set -> void
+WorkerKit.Abstractions.Options.HttpResilienceOptions.RetryDelaySeconds.get -> int
+WorkerKit.Abstractions.Options.HttpResilienceOptions.RetryDelaySeconds.set -> void
+WorkerKit.Abstractions.Options.HttpResilienceOptions.TotalRequestTimeoutSeconds.get -> int
+WorkerKit.Abstractions.Options.HttpResilienceOptions.TotalRequestTimeoutSeconds.set -> void
+WorkerKit.Abstractions.Options.HttpResilienceRules
+WorkerKit.Abstractions.Options.InstanceOptions
+WorkerKit.Abstractions.Options.InstanceOptions.CleanTempOnStart.get -> bool
+WorkerKit.Abstractions.Options.InstanceOptions.CleanTempOnStart.set -> void
+WorkerKit.Abstractions.Options.InstanceOptions.DataDirectory.get -> string!
+WorkerKit.Abstractions.Options.InstanceOptions.DataDirectory.set -> void
+WorkerKit.Abstractions.Options.InstanceOptions.InstanceOptions() -> void
+WorkerKit.Abstractions.Options.InstanceOptions.RequireLock.get -> bool
+WorkerKit.Abstractions.Options.InstanceOptions.RequireLock.set -> void
+WorkerKit.Abstractions.Options.InstanceOptions.TempDirectory.get -> string!
+WorkerKit.Abstractions.Options.InstanceOptions.TempDirectory.set -> void
+WorkerKit.Abstractions.Options.LogFileOptions
+WorkerKit.Abstractions.Options.LogFileOptions.FlushIntervalSeconds.get -> int
+WorkerKit.Abstractions.Options.LogFileOptions.FlushIntervalSeconds.set -> void
+WorkerKit.Abstractions.Options.LogFileOptions.LogFileOptions() -> void
+WorkerKit.Abstractions.Options.LogFileOptions.Path.get -> string!
+WorkerKit.Abstractions.Options.LogFileOptions.Path.set -> void
+WorkerKit.Abstractions.Options.LogFileOptions.RetainedFileCount.get -> int
+WorkerKit.Abstractions.Options.LogFileOptions.RetainedFileCount.set -> void
+WorkerKit.Abstractions.Options.QueueWorkerOptions
+WorkerKit.Abstractions.Options.QueueWorkerOptions.BatchSize.get -> int
+WorkerKit.Abstractions.Options.QueueWorkerOptions.BatchSize.set -> void
+WorkerKit.Abstractions.Options.QueueWorkerOptions.Enabled.get -> bool
+WorkerKit.Abstractions.Options.QueueWorkerOptions.Enabled.set -> void
+WorkerKit.Abstractions.Options.QueueWorkerOptions.LeaseDuration.get -> System.TimeSpan
+WorkerKit.Abstractions.Options.QueueWorkerOptions.LeaseDuration.set -> void
+WorkerKit.Abstractions.Options.QueueWorkerOptions.MaxAttempts.get -> int
+WorkerKit.Abstractions.Options.QueueWorkerOptions.MaxAttempts.set -> void
+WorkerKit.Abstractions.Options.QueueWorkerOptions.MaxConcurrency.get -> int
+WorkerKit.Abstractions.Options.QueueWorkerOptions.MaxConcurrency.set -> void
+WorkerKit.Abstractions.Options.QueueWorkerOptions.MaxIdleDelay.get -> System.TimeSpan
+WorkerKit.Abstractions.Options.QueueWorkerOptions.MaxIdleDelay.set -> void
+WorkerKit.Abstractions.Options.QueueWorkerOptions.MinIdleDelay.get -> System.TimeSpan
+WorkerKit.Abstractions.Options.QueueWorkerOptions.MinIdleDelay.set -> void
+WorkerKit.Abstractions.Options.QueueWorkerOptions.QueueWorkerOptions() -> void
+WorkerKit.Abstractions.Options.QueueWorkerOptions.RetryDelay.get -> System.TimeSpan
+WorkerKit.Abstractions.Options.QueueWorkerOptions.RetryDelay.set -> void
+WorkerKit.Abstractions.Queues.IQueuePendingSource
+WorkerKit.Abstractions.Queues.IQueuePendingSource.Name.get -> string!
+WorkerKit.Abstractions.Queues.IQueuePendingSource.PendingCount.get -> long?
+WorkerKit.Abstractions.Queues.IWorkItemHandler<T>
+WorkerKit.Abstractions.Queues.IWorkItemHandler<T>.HandleAsync(WorkerKit.Abstractions.Queues.WorkItem<T>! item, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+WorkerKit.Abstractions.Queues.IWorkQueue<T>
+WorkerKit.Abstractions.Queues.IWorkQueue<T>.ClaimAsync(int max, System.TimeSpan leaseDuration, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<WorkerKit.Abstractions.Queues.WorkItem<T>!>!>!
+WorkerKit.Abstractions.Queues.IWorkQueue<T>.CompleteAsync(WorkerKit.Abstractions.Queues.WorkItem<T>! item, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+WorkerKit.Abstractions.Queues.IWorkQueue<T>.FailAsync(WorkerKit.Abstractions.Queues.WorkItem<T>! item, string! reason, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+WorkerKit.Abstractions.Queues.IWorkQueue<T>.GetPendingCountAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<long?>!
+WorkerKit.Abstractions.Queues.IWorkQueue<T>.ReleaseAsync(WorkerKit.Abstractions.Queues.WorkItem<T>! item, System.TimeSpan? delay, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+WorkerKit.Abstractions.Queues.PermanentWorkItemException
+WorkerKit.Abstractions.Queues.PermanentWorkItemException.PermanentWorkItemException(string! message, System.Exception? inner = null) -> void
+WorkerKit.Abstractions.Queues.WorkItem<T>
+WorkerKit.Abstractions.Queues.WorkItem<T>.<Clone>$() -> WorkerKit.Abstractions.Queues.WorkItem<T>!
+WorkerKit.Abstractions.Queues.WorkItem<T>.Attempt.get -> int
+WorkerKit.Abstractions.Queues.WorkItem<T>.Attempt.init -> void
+WorkerKit.Abstractions.Queues.WorkItem<T>.Deconstruct(out string! Id, out T Payload, out int Attempt, out System.DateTimeOffset LeaseUntil, out string? PartitionKey) -> void
+WorkerKit.Abstractions.Queues.WorkItem<T>.Equals(WorkerKit.Abstractions.Queues.WorkItem<T>? other) -> bool
+WorkerKit.Abstractions.Queues.WorkItem<T>.Id.get -> string!
+WorkerKit.Abstractions.Queues.WorkItem<T>.Id.init -> void
+WorkerKit.Abstractions.Queues.WorkItem<T>.LeaseUntil.get -> System.DateTimeOffset
+WorkerKit.Abstractions.Queues.WorkItem<T>.LeaseUntil.init -> void
+WorkerKit.Abstractions.Queues.WorkItem<T>.PartitionKey.get -> string?
+WorkerKit.Abstractions.Queues.WorkItem<T>.PartitionKey.init -> void
+WorkerKit.Abstractions.Queues.WorkItem<T>.Payload.get -> T
+WorkerKit.Abstractions.Queues.WorkItem<T>.Payload.init -> void
+WorkerKit.Abstractions.Queues.WorkItem<T>.WorkItem(string! Id, T Payload, int Attempt, System.DateTimeOffset LeaseUntil, string? PartitionKey = null) -> void
+WorkerKit.Abstractions.Workers.IWorkerHeartbeat
+WorkerKit.Abstractions.Workers.IWorkerHeartbeat.Failure(string! workerName, System.Exception! exception) -> void
+WorkerKit.Abstractions.Workers.IWorkerHeartbeat.Register(string! workerName, System.TimeSpan interval) -> void
+WorkerKit.Abstractions.Workers.IWorkerHeartbeat.Snapshot() -> System.Collections.Generic.IReadOnlyList<WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot!>!
+WorkerKit.Abstractions.Workers.IWorkerHeartbeat.Success(string! workerName) -> void
+WorkerKit.Abstractions.Workers.IWorkerIterationObserver
+WorkerKit.Abstractions.Workers.IWorkerIterationObserver.IterationAbandoned(string! workerName) -> void
+WorkerKit.Abstractions.Workers.IWorkerIterationObserver.IterationFailed(string! workerName, System.TimeSpan duration, System.Exception! exception) -> void
+WorkerKit.Abstractions.Workers.IWorkerIterationObserver.IterationStarting(string! workerName) -> void
+WorkerKit.Abstractions.Workers.IWorkerIterationObserver.IterationSucceeded(string! workerName, System.TimeSpan duration, int itemCount) -> void
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.<Clone>$() -> WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot!
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.ConsecutiveFailures.get -> int
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.ConsecutiveFailures.init -> void
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Deconstruct(out string! Name, out System.DateTimeOffset Registered, out System.DateTimeOffset? LastSuccess, out System.TimeSpan Interval, out System.TimeSpan Grace, out int ConsecutiveFailures, out string? LastError) -> void
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Equals(WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot? other) -> bool
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Grace.get -> System.TimeSpan
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Grace.init -> void
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Interval.get -> System.TimeSpan
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Interval.init -> void
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.LastError.get -> string?
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.LastError.init -> void
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.LastSuccess.get -> System.DateTimeOffset?
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.LastSuccess.init -> void
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Name.get -> string!
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Name.init -> void
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Registered.get -> System.DateTimeOffset
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Registered.init -> void
+WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.WorkerHeartbeatSnapshot(string! Name, System.DateTimeOffset Registered, System.DateTimeOffset? LastSuccess, System.TimeSpan Interval, System.TimeSpan Grace, int ConsecutiveFailures, string? LastError) -> void
+const WorkerKit.Abstractions.Options.DataOptions.SectionName = "Data" -> string!
+const WorkerKit.Abstractions.Options.HealthOptions.SectionName = "Health" -> string!
+const WorkerKit.Abstractions.Options.InstanceOptions.SectionName = "Instance" -> string!
+const WorkerKit.Abstractions.Options.LogFileOptions.SectionName = "LogFile" -> string!
+const WorkerKit.Abstractions.Options.QueueWorkerOptions.SectionName = "Queue" -> string!
+override WorkerKit.Abstractions.Identity.WorkerAppIdentity.Equals(object? obj) -> bool
+override WorkerKit.Abstractions.Identity.WorkerAppIdentity.GetHashCode() -> int
+override WorkerKit.Abstractions.Identity.WorkerAppIdentity.ToString() -> string!
+override WorkerKit.Abstractions.Queues.WorkItem<T>.Equals(object? obj) -> bool
+override WorkerKit.Abstractions.Queues.WorkItem<T>.GetHashCode() -> int
+override WorkerKit.Abstractions.Queues.WorkItem<T>.ToString() -> string!
+override WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Equals(object? obj) -> bool
+override WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.GetHashCode() -> int
+override WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.ToString() -> string!
+static WorkerKit.Abstractions.Identity.WorkerAppIdentity.Create(System.Reflection.Assembly! applicationAssembly, string? name = null, string? serviceName = null, string? envPrefix = null) -> WorkerKit.Abstractions.Identity.WorkerAppIdentity!
+static WorkerKit.Abstractions.Identity.WorkerAppIdentity.DeriveEnvPrefix(string! name) -> string!
+static WorkerKit.Abstractions.Identity.WorkerAppIdentity.FromAssembly(System.Reflection.Assembly! applicationAssembly) -> WorkerKit.Abstractions.Identity.WorkerAppIdentity!
+static WorkerKit.Abstractions.Identity.WorkerAppIdentity.FromEntryAssembly(System.Reflection.Assembly! fallback) -> WorkerKit.Abstractions.Identity.WorkerAppIdentity!
+static WorkerKit.Abstractions.Identity.WorkerAppIdentity.NormalizeEnvPrefix(string! prefix) -> string!
+static WorkerKit.Abstractions.Identity.WorkerAppIdentity.ReadInformationalVersion(System.Reflection.Assembly! assembly) -> string!
+static WorkerKit.Abstractions.Identity.WorkerAppIdentity.ToKebabCase(string! name) -> string!
+static WorkerKit.Abstractions.Identity.WorkerAppIdentity.operator !=(WorkerKit.Abstractions.Identity.WorkerAppIdentity? left, WorkerKit.Abstractions.Identity.WorkerAppIdentity? right) -> bool
+static WorkerKit.Abstractions.Identity.WorkerAppIdentity.operator ==(WorkerKit.Abstractions.Identity.WorkerAppIdentity? left, WorkerKit.Abstractions.Identity.WorkerAppIdentity? right) -> bool
+static WorkerKit.Abstractions.Options.HttpResilienceRules.Evaluate(WorkerKit.Abstractions.Options.HttpResilienceOptions! options, string! prefix) -> System.Collections.Generic.IReadOnlyList<string!>!
+static WorkerKit.Abstractions.Queues.WorkItem<T>.operator !=(WorkerKit.Abstractions.Queues.WorkItem<T>? left, WorkerKit.Abstractions.Queues.WorkItem<T>? right) -> bool
+static WorkerKit.Abstractions.Queues.WorkItem<T>.operator ==(WorkerKit.Abstractions.Queues.WorkItem<T>? left, WorkerKit.Abstractions.Queues.WorkItem<T>? right) -> bool
+static WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.operator !=(WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot? left, WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot? right) -> bool
+static WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.operator ==(WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot? left, WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot? right) -> bool
