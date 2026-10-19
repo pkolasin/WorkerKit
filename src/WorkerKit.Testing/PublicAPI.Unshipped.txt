@@ -39,6 +39,7 @@ WorkerKit.Testing.WorkerKitAssertException
 WorkerKit.Testing.WorkerKitAssertException.WorkerKitAssertException(string! message) -> void
 WorkerKit.Testing.WorkerKitAssertException.WorkerKitAssertException(string! message, System.Exception! innerException) -> void
 const WorkerKit.Testing.CliReference.UpdateVariable = "WORKERKIT_UPDATE_CLI_DOC" -> string!
+static WorkerKit.Testing.CliReference.AssertUpToDate(string! path, string! actual, string! regenerateCommand, bool? update = null) -> void
 static WorkerKit.Testing.InMemoryQueue.DeadLetters<T>(System.IServiceProvider! services) -> System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Queues.DeadLetter<T>!>!
 static WorkerKit.Testing.InMemoryQueue.Of<T>(System.IServiceProvider! services) -> WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>!
 static WorkerKit.Testing.InMemoryQueue.Pending<T>(System.IServiceProvider! services) -> long
