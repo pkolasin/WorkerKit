@@ -1,0 +1,415 @@
+#nullable enable
+WorkerKit.Hosting.AppIdentity
+WorkerKit.Hosting.Cli.ConsoleCommandOutput
+WorkerKit.Hosting.Cli.ConsoleCommandOutput.ConsoleCommandOutput() -> void
+WorkerKit.Hosting.Cli.ConsoleCommandOutput.WriteError(string? value) -> void
+WorkerKit.Hosting.Cli.ConsoleCommandOutput.WriteLine(string? value) -> void
+WorkerKit.Hosting.Cli.ExitCodes
+WorkerKit.Hosting.Cli.Handlers.CheckConfigHandler
+WorkerKit.Hosting.Cli.Handlers.CheckConfigHandler.CheckConfigHandler(Microsoft.Extensions.Hosting.IHostEnvironment! environment, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.IServiceProvider! services, WorkerKit.Hosting.Cli.ICommandOutput! output, WorkerKit.Abstractions.Instances.IInstanceContext! instance, WorkerKit.Abstractions.Identity.WorkerAppIdentity! application, WorkerKit.Hosting.Configuration.OptionsSectionCatalog! sections) -> void
+WorkerKit.Hosting.Cli.Handlers.CheckConfigHandler.Execute() -> int
+WorkerKit.Hosting.Cli.Handlers.VersionHandler
+WorkerKit.Hosting.Cli.Handlers.VersionHandler.Execute() -> int
+WorkerKit.Hosting.Cli.Handlers.VersionHandler.VersionHandler(WorkerKit.Hosting.Cli.ICommandOutput! output) -> void
+WorkerKit.Hosting.Cli.Help.CliArgument
+WorkerKit.Hosting.Cli.Help.CliArgument.<Clone>$() -> WorkerKit.Hosting.Cli.Help.CliArgument!
+WorkerKit.Hosting.Cli.Help.CliArgument.CliArgument(string! Name, string? Description, int MinValues, int MaxValues, string? DefaultValue) -> void
+WorkerKit.Hosting.Cli.Help.CliArgument.Deconstruct(out string! Name, out string? Description, out int MinValues, out int MaxValues, out string? DefaultValue) -> void
+WorkerKit.Hosting.Cli.Help.CliArgument.DefaultValue.get -> string?
+WorkerKit.Hosting.Cli.Help.CliArgument.DefaultValue.init -> void
+WorkerKit.Hosting.Cli.Help.CliArgument.Description.get -> string?
+WorkerKit.Hosting.Cli.Help.CliArgument.Description.init -> void
+WorkerKit.Hosting.Cli.Help.CliArgument.Equals(WorkerKit.Hosting.Cli.Help.CliArgument? other) -> bool
+WorkerKit.Hosting.Cli.Help.CliArgument.MaxValues.get -> int
+WorkerKit.Hosting.Cli.Help.CliArgument.MaxValues.init -> void
+WorkerKit.Hosting.Cli.Help.CliArgument.MinValues.get -> int
+WorkerKit.Hosting.Cli.Help.CliArgument.MinValues.init -> void
+WorkerKit.Hosting.Cli.Help.CliArgument.Name.get -> string!
+WorkerKit.Hosting.Cli.Help.CliArgument.Name.init -> void
+WorkerKit.Hosting.Cli.Help.CliCommand
+WorkerKit.Hosting.Cli.Help.CliCommand.<Clone>$() -> WorkerKit.Hosting.Cli.Help.CliCommand!
+WorkerKit.Hosting.Cli.Help.CliCommand.Arguments.get -> System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Cli.Help.CliArgument!>!
+WorkerKit.Hosting.Cli.Help.CliCommand.Arguments.init -> void
+WorkerKit.Hosting.Cli.Help.CliCommand.CliCommand(string! Path, string? Description, System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Cli.Help.CliOption!>! Options, System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Cli.Help.CliArgument!>! Arguments, System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Cli.Help.CliCommand!>! Subcommands) -> void
+WorkerKit.Hosting.Cli.Help.CliCommand.Deconstruct(out string! Path, out string? Description, out System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Cli.Help.CliOption!>! Options, out System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Cli.Help.CliArgument!>! Arguments, out System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Cli.Help.CliCommand!>! Subcommands) -> void
+WorkerKit.Hosting.Cli.Help.CliCommand.Description.get -> string?
+WorkerKit.Hosting.Cli.Help.CliCommand.Description.init -> void
+WorkerKit.Hosting.Cli.Help.CliCommand.Equals(WorkerKit.Hosting.Cli.Help.CliCommand? other) -> bool
+WorkerKit.Hosting.Cli.Help.CliCommand.Options.get -> System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Cli.Help.CliOption!>!
+WorkerKit.Hosting.Cli.Help.CliCommand.Options.init -> void
+WorkerKit.Hosting.Cli.Help.CliCommand.Path.get -> string!
+WorkerKit.Hosting.Cli.Help.CliCommand.Path.init -> void
+WorkerKit.Hosting.Cli.Help.CliCommand.Subcommands.get -> System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Cli.Help.CliCommand!>!
+WorkerKit.Hosting.Cli.Help.CliCommand.Subcommands.init -> void
+WorkerKit.Hosting.Cli.Help.CliModel
+WorkerKit.Hosting.Cli.Help.CliOption
+WorkerKit.Hosting.Cli.Help.CliOption.<Clone>$() -> WorkerKit.Hosting.Cli.Help.CliOption!
+WorkerKit.Hosting.Cli.Help.CliOption.Aliases.get -> System.Collections.Generic.IReadOnlyList<string!>!
+WorkerKit.Hosting.Cli.Help.CliOption.Aliases.init -> void
+WorkerKit.Hosting.Cli.Help.CliOption.CliOption(string! Name, System.Collections.Generic.IReadOnlyList<string!>! Aliases, string? Description, bool Required, bool IsFlag, string? DefaultValue, bool Recursive) -> void
+WorkerKit.Hosting.Cli.Help.CliOption.Deconstruct(out string! Name, out System.Collections.Generic.IReadOnlyList<string!>! Aliases, out string? Description, out bool Required, out bool IsFlag, out string? DefaultValue, out bool Recursive) -> void
+WorkerKit.Hosting.Cli.Help.CliOption.DefaultValue.get -> string?
+WorkerKit.Hosting.Cli.Help.CliOption.DefaultValue.init -> void
+WorkerKit.Hosting.Cli.Help.CliOption.Description.get -> string?
+WorkerKit.Hosting.Cli.Help.CliOption.Description.init -> void
+WorkerKit.Hosting.Cli.Help.CliOption.Equals(WorkerKit.Hosting.Cli.Help.CliOption? other) -> bool
+WorkerKit.Hosting.Cli.Help.CliOption.IsFlag.get -> bool
+WorkerKit.Hosting.Cli.Help.CliOption.IsFlag.init -> void
+WorkerKit.Hosting.Cli.Help.CliOption.Name.get -> string!
+WorkerKit.Hosting.Cli.Help.CliOption.Name.init -> void
+WorkerKit.Hosting.Cli.Help.CliOption.Recursive.get -> bool
+WorkerKit.Hosting.Cli.Help.CliOption.Recursive.init -> void
+WorkerKit.Hosting.Cli.Help.CliOption.Required.get -> bool
+WorkerKit.Hosting.Cli.Help.CliOption.Required.init -> void
+WorkerKit.Hosting.Cli.Help.HostConfigurationNotes
+WorkerKit.Hosting.Cli.Help.ICliWriter
+WorkerKit.Hosting.Cli.Help.ICliWriter.Write(WorkerKit.Hosting.Cli.Help.CliCommand! model, System.IO.TextWriter! output) -> void
+WorkerKit.Hosting.Cli.Help.MarkdownCliWriter
+WorkerKit.Hosting.Cli.Help.MarkdownCliWriter.MarkdownCliWriter(WorkerKit.Abstractions.Identity.WorkerAppIdentity? identity = null) -> void
+WorkerKit.Hosting.Cli.Help.MarkdownCliWriter.Write(WorkerKit.Hosting.Cli.Help.CliCommand! model, System.IO.TextWriter! output) -> void
+WorkerKit.Hosting.Cli.Help.TextCliWriter
+WorkerKit.Hosting.Cli.Help.TextCliWriter.TextCliWriter(WorkerKit.Abstractions.Identity.WorkerAppIdentity? identity = null) -> void
+WorkerKit.Hosting.Cli.Help.TextCliWriter.Write(WorkerKit.Hosting.Cli.Help.CliCommand! model, System.IO.TextWriter! output) -> void
+WorkerKit.Hosting.Cli.ICommandOutput
+WorkerKit.Hosting.Cli.ICommandOutput.WriteError(string? value) -> void
+WorkerKit.Hosting.Cli.ICommandOutput.WriteLine(string? value) -> void
+WorkerKit.Hosting.Configuration.OptionsSectionCatalog
+WorkerKit.Hosting.Configuration.OptionsSectionCatalog.LeafKeys(Microsoft.Extensions.Configuration.IConfiguration! configuration) -> System.Collections.Generic.IReadOnlyList<string!>!
+WorkerKit.Hosting.Configuration.OptionsSectionCatalog.OptionsSectionCatalog() -> void
+WorkerKit.Hosting.Configuration.OptionsSectionCatalog.Remember(string! sectionPath) -> void
+WorkerKit.Hosting.Configuration.OptionsSectionCatalog.Sections.get -> System.Collections.Generic.IReadOnlyList<string!>!
+WorkerKit.Hosting.DependencyInjection.InfrastructureServiceCollectionExtensions
+WorkerKit.Hosting.DependencyInjection.OptionsRegistrationExtensions
+WorkerKit.Hosting.DependencyInjection.QueueServiceCollectionExtensions
+WorkerKit.Hosting.Health.DataStoreHealthCheck
+WorkerKit.Hosting.Health.DataStoreHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult>!
+WorkerKit.Hosting.Health.DataStoreHealthCheck.DataStoreHealthCheck(Microsoft.Extensions.Options.IOptionsMonitor<WorkerKit.Abstractions.Options.DataOptions!>! data, System.Collections.Generic.IEnumerable<WorkerKit.Abstractions.Data.IDbConnectionFactory!>! factories) -> void
+WorkerKit.Hosting.Health.HealthEndpointWorker
+WorkerKit.Hosting.Health.HealthEndpointWorker.HealthEndpointWorker(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckService! healthChecks, Microsoft.Extensions.Options.IOptionsMonitor<WorkerKit.Abstractions.Options.HealthOptions!>! options, WorkerKit.Abstractions.Instances.IInstanceContext! instance, Microsoft.Extensions.Logging.ILogger<WorkerKit.Hosting.Health.HealthEndpointWorker!>! logger) -> void
+WorkerKit.Hosting.Health.HealthResponses
+WorkerKit.Hosting.Health.InstanceDirectoriesHealthCheck
+WorkerKit.Hosting.Health.InstanceDirectoriesHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult>!
+WorkerKit.Hosting.Health.InstanceDirectoriesHealthCheck.InstanceDirectoriesHealthCheck(WorkerKit.Abstractions.Instances.IInstanceContext! instance) -> void
+WorkerKit.Hosting.Health.LoggingHealthCheckPublisher
+WorkerKit.Hosting.Health.LoggingHealthCheckPublisher.LoggingHealthCheckPublisher(Microsoft.Extensions.Logging.ILogger<WorkerKit.Hosting.Health.LoggingHealthCheckPublisher!>! logger) -> void
+WorkerKit.Hosting.Health.LoggingHealthCheckPublisher.PublishAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthReport! report, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+WorkerKit.Hosting.Health.MetricsHealthCheckPublisher
+WorkerKit.Hosting.Health.MetricsHealthCheckPublisher.MetricsHealthCheckPublisher(WorkerKit.Hosting.Telemetry.WorkerTelemetry! telemetry) -> void
+WorkerKit.Hosting.Health.MetricsHealthCheckPublisher.PublishAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthReport! report, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+WorkerKit.Hosting.Health.WorkerHeartbeatHealthCheck
+WorkerKit.Hosting.Health.WorkerHeartbeatHealthCheck.CheckHealthAsync(Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Microsoft.Extensions.Diagnostics.HealthChecks.HealthCheckResult>!
+WorkerKit.Hosting.Health.WorkerHeartbeatHealthCheck.WorkerHeartbeatHealthCheck(WorkerKit.Abstractions.Workers.IWorkerHeartbeat! heartbeat, System.TimeProvider! time) -> void
+WorkerKit.Hosting.Health.WorkerHeartbeatRegistry
+WorkerKit.Hosting.Health.WorkerHeartbeatRegistry.Failure(string! workerName, System.Exception! exception) -> void
+WorkerKit.Hosting.Health.WorkerHeartbeatRegistry.Register(string! workerName, System.TimeSpan interval) -> void
+WorkerKit.Hosting.Health.WorkerHeartbeatRegistry.Snapshot() -> System.Collections.Generic.IReadOnlyList<WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot!>!
+WorkerKit.Hosting.Health.WorkerHeartbeatRegistry.Success(string! workerName) -> void
+WorkerKit.Hosting.Health.WorkerHeartbeatRegistry.WorkerHeartbeatRegistry(Microsoft.Extensions.Options.IOptionsMonitor<WorkerKit.Abstractions.Options.HealthOptions!>! options, System.TimeProvider! time) -> void
+WorkerKit.Hosting.Health.WorkerHeartbeatRules
+WorkerKit.Hosting.Http.HttpClientRegistration
+WorkerKit.Hosting.InstanceEnvironment
+WorkerKit.Hosting.InstanceEnvironment.DataDirectory.get -> string!
+WorkerKit.Hosting.InstanceEnvironment.EnsureDirectories() -> void
+WorkerKit.Hosting.InstanceEnvironment.InstallDirectory.get -> string!
+WorkerKit.Hosting.InstanceEnvironment.InstanceDirectory.get -> string!
+WorkerKit.Hosting.InstanceEnvironment.InstanceName.get -> string!
+WorkerKit.Hosting.InstanceEnvironment.LogDirectory.get -> string!
+WorkerKit.Hosting.InstanceEnvironment.ResolvePath(string! path) -> string!
+WorkerKit.Hosting.InstanceEnvironment.TempDirectory.get -> string!
+WorkerKit.Hosting.InstanceLocation
+WorkerKit.Hosting.InstanceLocation.<Clone>$() -> WorkerKit.Hosting.InstanceLocation!
+WorkerKit.Hosting.InstanceLocation.Deconstruct(out string! Name, out string! Directory, out bool IsDefault) -> void
+WorkerKit.Hosting.InstanceLocation.Directory.get -> string!
+WorkerKit.Hosting.InstanceLocation.Directory.init -> void
+WorkerKit.Hosting.InstanceLocation.Equals(WorkerKit.Hosting.InstanceLocation? other) -> bool
+WorkerKit.Hosting.InstanceLocation.InstanceLocation(string! Name, string! Directory, bool IsDefault) -> void
+WorkerKit.Hosting.InstanceLocation.IsDefault.get -> bool
+WorkerKit.Hosting.InstanceLocation.IsDefault.init -> void
+WorkerKit.Hosting.InstanceLocation.Name.get -> string!
+WorkerKit.Hosting.InstanceLocation.Name.init -> void
+WorkerKit.Hosting.InstanceLocator
+WorkerKit.Hosting.InstanceLock
+WorkerKit.Hosting.InstanceLock.Dispose() -> void
+WorkerKit.Hosting.Queues.DeadLetter<T>
+WorkerKit.Hosting.Queues.DeadLetter<T>.<Clone>$() -> WorkerKit.Hosting.Queues.DeadLetter<T>!
+WorkerKit.Hosting.Queues.DeadLetter<T>.Attempt.get -> int
+WorkerKit.Hosting.Queues.DeadLetter<T>.Attempt.init -> void
+WorkerKit.Hosting.Queues.DeadLetter<T>.DeadLetter(string! Id, T Payload, int Attempt, string? PartitionKey, string! Reason, System.DateTimeOffset FailedAt) -> void
+WorkerKit.Hosting.Queues.DeadLetter<T>.Deconstruct(out string! Id, out T Payload, out int Attempt, out string? PartitionKey, out string! Reason, out System.DateTimeOffset FailedAt) -> void
+WorkerKit.Hosting.Queues.DeadLetter<T>.Equals(WorkerKit.Hosting.Queues.DeadLetter<T>? other) -> bool
+WorkerKit.Hosting.Queues.DeadLetter<T>.FailedAt.get -> System.DateTimeOffset
+WorkerKit.Hosting.Queues.DeadLetter<T>.FailedAt.init -> void
+WorkerKit.Hosting.Queues.DeadLetter<T>.Id.get -> string!
+WorkerKit.Hosting.Queues.DeadLetter<T>.Id.init -> void
+WorkerKit.Hosting.Queues.DeadLetter<T>.PartitionKey.get -> string?
+WorkerKit.Hosting.Queues.DeadLetter<T>.PartitionKey.init -> void
+WorkerKit.Hosting.Queues.DeadLetter<T>.Payload.get -> T
+WorkerKit.Hosting.Queues.DeadLetter<T>.Payload.init -> void
+WorkerKit.Hosting.Queues.DeadLetter<T>.Reason.get -> string!
+WorkerKit.Hosting.Queues.DeadLetter<T>.Reason.init -> void
+WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>
+WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>.ClaimAsync(int max, System.TimeSpan leaseDuration, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<WorkerKit.Abstractions.Queues.WorkItem<T>!>!>!
+WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>.CompleteAsync(WorkerKit.Abstractions.Queues.WorkItem<T>! item, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>.DeadLetters.get -> System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Queues.DeadLetter<T>!>!
+WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>.Enqueue(T payload, string? partitionKey = null) -> string!
+WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>.FailAsync(WorkerKit.Abstractions.Queues.WorkItem<T>! item, string! reason, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>.GetPendingCountAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<long?>!
+WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>.InMemoryWorkQueue(System.TimeProvider! time, string! name) -> void
+WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>.Name.get -> string!
+WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>.PendingCount.get -> long?
+WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>.ReleaseAsync(WorkerKit.Abstractions.Queues.WorkItem<T>! item, System.TimeSpan? delay, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+WorkerKit.Hosting.SerilogHostBuilderExtensions
+WorkerKit.Hosting.StartupValidation
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.<Clone>$() -> WorkerKit.Hosting.Telemetry.OtlpLogExportSettings!
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.Deconstruct(out string! Endpoint, out string? LogsEndpoint, out WorkerKit.Hosting.Telemetry.OtlpProtocolKind Protocol, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Headers) -> void
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.Endpoint.get -> string!
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.Endpoint.init -> void
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.Equals(WorkerKit.Hosting.Telemetry.OtlpLogExportSettings? other) -> bool
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.Headers.init -> void
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.LogsEndpoint.get -> string?
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.LogsEndpoint.init -> void
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.OtlpLogExportSettings(string! Endpoint, string? LogsEndpoint, WorkerKit.Hosting.Telemetry.OtlpProtocolKind Protocol, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Headers) -> void
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.Protocol.get -> WorkerKit.Hosting.Telemetry.OtlpProtocolKind
+WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.Protocol.init -> void
+WorkerKit.Hosting.Telemetry.OtlpProtocolKind
+WorkerKit.Hosting.Telemetry.OtlpProtocolKind.Grpc = 0 -> WorkerKit.Hosting.Telemetry.OtlpProtocolKind
+WorkerKit.Hosting.Telemetry.OtlpProtocolKind.HttpProtobuf = 1 -> WorkerKit.Hosting.Telemetry.OtlpProtocolKind
+WorkerKit.Hosting.Telemetry.TelemetryExportSuppression
+WorkerKit.Hosting.Telemetry.TelemetryIdentity
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.<Clone>$() -> WorkerKit.Hosting.Telemetry.TelemetryIdentity!
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.Deconstruct(out string! ServiceName, out string! ServiceVersion, out string! InstanceName, out string! HostName, out string! EnvironmentName) -> void
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.EnvironmentName.get -> string!
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.EnvironmentName.init -> void
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.Equals(WorkerKit.Hosting.Telemetry.TelemetryIdentity? other) -> bool
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.HostName.get -> string!
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.HostName.init -> void
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.InstanceName.get -> string!
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.InstanceName.init -> void
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.LibraryVersion.get -> string!
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.LibraryVersion.init -> void
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.ServiceName.get -> string!
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.ServiceName.init -> void
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.ServiceVersion.get -> string!
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.ServiceVersion.init -> void
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.TelemetryIdentity(string! ServiceName, string! ServiceVersion, string! InstanceName, string! HostName, string! EnvironmentName) -> void
+WorkerKit.Hosting.Telemetry.TelemetryIdentity.ToSerilogAttributes() -> System.Collections.Generic.Dictionary<string!, object!>!
+WorkerKit.Hosting.Telemetry.TelemetryPipeline
+WorkerKit.Hosting.Telemetry.TelemetryPipeline.OtlpExporterEnabled.get -> bool
+WorkerKit.Hosting.Telemetry.TelemetryPipeline.TelemetryPipeline(bool otlpExporterEnabled) -> void
+WorkerKit.Hosting.Telemetry.TelemetryShutdown
+WorkerKit.Hosting.Telemetry.TelemetrySourceBuilderExtensions
+WorkerKit.Hosting.Telemetry.TelemetrySourceRegistry
+WorkerKit.Hosting.Telemetry.TelemetrySourceRegistry.Add(string! name) -> void
+WorkerKit.Hosting.Telemetry.TelemetrySourceRegistry.Names.get -> System.Collections.Generic.IReadOnlyList<string!>!
+WorkerKit.Hosting.Telemetry.TelemetrySourceRegistry.TelemetrySourceRegistry() -> void
+WorkerKit.Hosting.Telemetry.TelemetryWorkerIterationObserver
+WorkerKit.Hosting.Telemetry.TelemetryWorkerIterationObserver.IterationAbandoned(string! workerName) -> void
+WorkerKit.Hosting.Telemetry.TelemetryWorkerIterationObserver.IterationFailed(string! workerName, System.TimeSpan duration, System.Exception! exception) -> void
+WorkerKit.Hosting.Telemetry.TelemetryWorkerIterationObserver.IterationStarting(string! workerName) -> void
+WorkerKit.Hosting.Telemetry.TelemetryWorkerIterationObserver.IterationSucceeded(string! workerName, System.TimeSpan duration, int itemCount) -> void
+WorkerKit.Hosting.Telemetry.TelemetryWorkerIterationObserver.TelemetryWorkerIterationObserver(WorkerKit.Hosting.Telemetry.WorkerTelemetry! telemetry) -> void
+WorkerKit.Hosting.Telemetry.WorkerDefaultsExtensions
+WorkerKit.Hosting.Telemetry.WorkerTelemetry
+WorkerKit.Hosting.Telemetry.WorkerTelemetry.RecordHealth(Microsoft.Extensions.Diagnostics.HealthChecks.HealthReport! report) -> void
+WorkerKit.Hosting.Telemetry.WorkerTelemetry.RecordItem(string! workerName, string! outcome) -> void
+WorkerKit.Hosting.Telemetry.WorkerTelemetry.RecordIteration(string! workerName, string! outcome, System.TimeSpan duration, int itemCount) -> void
+WorkerKit.Hosting.Telemetry.WorkerTelemetry.WorkerTelemetry(System.Diagnostics.Metrics.IMeterFactory! meterFactory, WorkerKit.Abstractions.Workers.IWorkerHeartbeat! heartbeat, System.Collections.Generic.IEnumerable<WorkerKit.Abstractions.Queues.IQueuePendingSource!>? pendingSources = null) -> void
+WorkerKit.Hosting.Validation.DataOptionsValidator
+WorkerKit.Hosting.Validation.DataOptionsValidator.DataOptionsValidator() -> void
+WorkerKit.Hosting.Validation.DataOptionsValidator.Validate(string? name, WorkerKit.Abstractions.Options.DataOptions! options) -> Microsoft.Extensions.Options.ValidateOptionsResult!
+WorkerKit.Hosting.Validation.HealthOptionsValidator
+WorkerKit.Hosting.Validation.HealthOptionsValidator.HealthOptionsValidator() -> void
+WorkerKit.Hosting.Validation.HealthOptionsValidator.Validate(string? name, WorkerKit.Abstractions.Options.HealthOptions! options) -> Microsoft.Extensions.Options.ValidateOptionsResult!
+WorkerKit.Hosting.Validation.HttpClientEndpointOptionsValidator<TOptions>
+WorkerKit.Hosting.Validation.HttpClientEndpointOptionsValidator<TOptions>.HttpClientEndpointOptionsValidator() -> void
+WorkerKit.Hosting.Validation.HttpClientEndpointOptionsValidator<TOptions>.Validate(string? name, TOptions! options) -> Microsoft.Extensions.Options.ValidateOptionsResult!
+WorkerKit.Hosting.Validation.InstanceOptionsValidator
+WorkerKit.Hosting.Validation.InstanceOptionsValidator.InstanceOptionsValidator() -> void
+WorkerKit.Hosting.Validation.InstanceOptionsValidator.Validate(string? name, WorkerKit.Abstractions.Options.InstanceOptions! options) -> Microsoft.Extensions.Options.ValidateOptionsResult!
+WorkerKit.Hosting.Validation.QueueWorkerOptionsValidator
+WorkerKit.Hosting.Validation.QueueWorkerOptionsValidator.QueueWorkerOptionsValidator(Microsoft.Extensions.Options.IOptionsMonitor<WorkerKit.Abstractions.Options.HealthOptions!>! health) -> void
+WorkerKit.Hosting.Validation.QueueWorkerOptionsValidator.Validate(string? name, WorkerKit.Abstractions.Options.QueueWorkerOptions! options) -> Microsoft.Extensions.Options.ValidateOptionsResult!
+WorkerKit.Hosting.WorkerApp
+WorkerKit.Hosting.WorkerAppBuilder
+WorkerKit.Hosting.WorkerAppBuilder.BuildHost(string? contentRoot = null, string? environmentName = null, System.Action<Microsoft.Extensions.Hosting.HostApplicationBuilder!>? configure = null, bool enableTelemetry = false, bool operatingSystemIntegration = true) -> Microsoft.Extensions.Hosting.HostApplicationBuilder!
+WorkerKit.Hosting.WorkerAppBuilder.Commands.get -> WorkerKit.Hosting.WorkerCommands!
+WorkerKit.Hosting.WorkerAppBuilder.ConfigureHost(System.Action<Microsoft.Extensions.Hosting.IHostApplicationBuilder!>! configure) -> WorkerKit.Hosting.WorkerAppBuilder!
+WorkerKit.Hosting.WorkerAppBuilder.Identity.get -> WorkerKit.Abstractions.Identity.WorkerAppIdentity!
+WorkerKit.Hosting.WorkerAppBuilder.RunAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
+WorkerKit.Hosting.WorkerAppBuilder.UseOperatingSystemIntegration(bool enabled) -> WorkerKit.Hosting.WorkerAppBuilder!
+WorkerKit.Hosting.WorkerAppOptions
+WorkerKit.Hosting.WorkerAppOptions.ApplicationAssembly.get -> System.Reflection.Assembly?
+WorkerKit.Hosting.WorkerAppOptions.ApplicationAssembly.set -> void
+WorkerKit.Hosting.WorkerAppOptions.EnvPrefix.get -> string?
+WorkerKit.Hosting.WorkerAppOptions.EnvPrefix.set -> void
+WorkerKit.Hosting.WorkerAppOptions.Name.get -> string?
+WorkerKit.Hosting.WorkerAppOptions.Name.set -> void
+WorkerKit.Hosting.WorkerAppOptions.ServiceName.get -> string?
+WorkerKit.Hosting.WorkerAppOptions.ServiceName.set -> void
+WorkerKit.Hosting.WorkerAppOptions.WorkerAppOptions() -> void
+WorkerKit.Hosting.WorkerApplicationBuilderExtensions
+WorkerKit.Hosting.WorkerCommandGroup
+WorkerKit.Hosting.WorkerCommandGroup.Add<TCommand>() -> WorkerKit.Hosting.WorkerCommandGroup!
+WorkerKit.Hosting.WorkerCommandGroup.AddGroup(string! name, string! description, System.Action<WorkerKit.Hosting.WorkerCommandGroup!>! configure) -> WorkerKit.Hosting.WorkerCommandGroup!
+WorkerKit.Hosting.WorkerCommands
+WorkerKit.Hosting.WorkerCommands.Add<TCommand>() -> WorkerKit.Hosting.WorkerCommands!
+WorkerKit.Hosting.WorkerCommands.AddGroup(string! name, string! description, System.Action<WorkerKit.Hosting.WorkerCommandGroup!>! configure) -> WorkerKit.Hosting.WorkerCommands!
+WorkerKit.Hosting.WorkerCommands.Build() -> System.CommandLine.RootCommand!
+WorkerKit.Hosting.WorkerCommands.Parse(string![]! args) -> System.CommandLine.ParseResult!
+WorkerKit.Hosting.WorkerHostBuilder
+WorkerKit.Hosting.WorkerHostDefaults
+WorkerKit.Hosting.Workers.IQueueBatches
+WorkerKit.Hosting.Workers.IQueueBatches.RunBatchAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<WorkerKit.Hosting.Workers.WorkerIterationResult!>!
+WorkerKit.Hosting.Workers.IWorkerIterations
+WorkerKit.Hosting.Workers.IWorkerIterations.RunIterationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<WorkerKit.Hosting.Workers.WorkerIterationResult!>!
+WorkerKit.Hosting.Workers.NoOpWorkerIterationObserver
+WorkerKit.Hosting.Workers.NoOpWorkerIterationObserver.IterationAbandoned(string! workerName) -> void
+WorkerKit.Hosting.Workers.NoOpWorkerIterationObserver.IterationFailed(string! workerName, System.TimeSpan duration, System.Exception! exception) -> void
+WorkerKit.Hosting.Workers.NoOpWorkerIterationObserver.IterationStarting(string! workerName) -> void
+WorkerKit.Hosting.Workers.NoOpWorkerIterationObserver.IterationSucceeded(string! workerName, System.TimeSpan duration, int itemCount) -> void
+WorkerKit.Hosting.Workers.NoOpWorkerIterationObserver.NoOpWorkerIterationObserver() -> void
+WorkerKit.Hosting.Workers.PeriodicWorker
+WorkerKit.Hosting.Workers.PeriodicWorker.Context.get -> WorkerKit.Hosting.Workers.WorkerContext!
+WorkerKit.Hosting.Workers.PeriodicWorker.Logger.get -> Microsoft.Extensions.Logging.ILogger!
+WorkerKit.Hosting.Workers.PeriodicWorker.PeriodicWorker(WorkerKit.Hosting.Workers.WorkerContext! context) -> void
+WorkerKit.Hosting.Workers.PeriodicWorker.RunIterationAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<WorkerKit.Hosting.Workers.WorkerIterationResult!>!
+WorkerKit.Hosting.Workers.QueueWorker<T>
+WorkerKit.Hosting.Workers.QueueWorker<T>.Options.get -> Microsoft.Extensions.Options.IOptionsMonitor<WorkerKit.Abstractions.Options.QueueWorkerOptions!>!
+WorkerKit.Hosting.Workers.QueueWorker<T>.QueueWorker(WorkerKit.Hosting.Workers.WorkerContext! context, WorkerKit.Abstractions.Queues.IWorkQueue<T>! queue, Microsoft.Extensions.Options.IOptionsMonitor<WorkerKit.Abstractions.Options.QueueWorkerOptions!>! options) -> void
+WorkerKit.Hosting.Workers.QueueWorker<T>.RunBatchAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<WorkerKit.Hosting.Workers.WorkerIterationResult!>!
+WorkerKit.Hosting.Workers.WorkerContext
+WorkerKit.Hosting.Workers.WorkerContext.CreateLogger(System.Type! category) -> Microsoft.Extensions.Logging.ILogger!
+WorkerKit.Hosting.Workers.WorkerContext.CreateLogger<TCategory>() -> Microsoft.Extensions.Logging.ILogger<TCategory>!
+WorkerKit.Hosting.Workers.WorkerContext.Heartbeat.get -> WorkerKit.Abstractions.Workers.IWorkerHeartbeat!
+WorkerKit.Hosting.Workers.WorkerContext.LoggerFactory.get -> Microsoft.Extensions.Logging.ILoggerFactory!
+WorkerKit.Hosting.Workers.WorkerContext.Observer.get -> WorkerKit.Abstractions.Workers.IWorkerIterationObserver!
+WorkerKit.Hosting.Workers.WorkerContext.Scopes.get -> Microsoft.Extensions.DependencyInjection.IServiceScopeFactory!
+WorkerKit.Hosting.Workers.WorkerContext.Telemetry.get -> WorkerKit.Hosting.Telemetry.WorkerTelemetry?
+WorkerKit.Hosting.Workers.WorkerContext.Time.get -> System.TimeProvider!
+WorkerKit.Hosting.Workers.WorkerContext.WorkerContext(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory! scopes, WorkerKit.Abstractions.Workers.IWorkerHeartbeat! heartbeat, WorkerKit.Abstractions.Workers.IWorkerIterationObserver! observer, Microsoft.Extensions.Logging.ILoggerFactory! loggerFactory, WorkerKit.Hosting.Telemetry.WorkerTelemetry? telemetry = null, System.TimeProvider? time = null) -> void
+WorkerKit.Hosting.Workers.WorkerIterationResult
+WorkerKit.Hosting.Workers.WorkerIterationResult.Error.get -> System.Exception?
+WorkerKit.Hosting.Workers.WorkerIterationResult.ItemCount.get -> int
+WorkerKit.Hosting.Workers.WorkerIterationResult.Status.get -> WorkerKit.Hosting.Workers.WorkerIterationStatus
+WorkerKit.Hosting.Workers.WorkerIterationResult.WorkerIterationResult(string! workerName, WorkerKit.Hosting.Workers.WorkerIterationStatus status, int itemCount, System.Exception? error) -> void
+WorkerKit.Hosting.Workers.WorkerIterationResult.WorkerName.get -> string!
+WorkerKit.Hosting.Workers.WorkerIterationStatus
+WorkerKit.Hosting.Workers.WorkerIterationStatus.Abandoned = 2 -> WorkerKit.Hosting.Workers.WorkerIterationStatus
+WorkerKit.Hosting.Workers.WorkerIterationStatus.Disabled = 3 -> WorkerKit.Hosting.Workers.WorkerIterationStatus
+WorkerKit.Hosting.Workers.WorkerIterationStatus.Failed = 1 -> WorkerKit.Hosting.Workers.WorkerIterationStatus
+WorkerKit.Hosting.Workers.WorkerIterationStatus.Succeeded = 0 -> WorkerKit.Hosting.Workers.WorkerIterationStatus
+abstract WorkerKit.Hosting.Workers.PeriodicWorker.Interval.get -> System.TimeSpan
+abstract WorkerKit.Hosting.Workers.PeriodicWorker.RunOnceAsync(System.IServiceProvider! services, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+abstract WorkerKit.Hosting.Workers.PeriodicWorker.WorkerName.get -> string!
+const WorkerKit.Hosting.Cli.ExitCodes.Error = 1 -> int
+const WorkerKit.Hosting.Cli.ExitCodes.Success = 0 -> int
+const WorkerKit.Hosting.Cli.Help.HostConfigurationNotes.Heading = "Host configuration overrides" -> string!
+const WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.EndpointKey = "OTEL_EXPORTER_OTLP_ENDPOINT" -> string!
+const WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.HeadersKey = "OTEL_EXPORTER_OTLP_HEADERS" -> string!
+const WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.LogsEndpointKey = "OTEL_EXPORTER_OTLP_LOGS_ENDPOINT" -> string!
+const WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.LogsHeadersKey = "OTEL_EXPORTER_OTLP_LOGS_HEADERS" -> string!
+const WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.LogsProtocolKey = "OTEL_EXPORTER_OTLP_LOGS_PROTOCOL" -> string!
+const WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.ProtocolKey = "OTEL_EXPORTER_OTLP_PROTOCOL" -> string!
+const WorkerKit.Hosting.Telemetry.TelemetryIdentity.ServiceNameKey = "Telemetry:ServiceName" -> string!
+const WorkerKit.Hosting.Telemetry.TelemetryShutdown.FlushTimeoutMilliseconds = 10000 -> int
+const WorkerKit.Hosting.Telemetry.WorkerTelemetry.MeterName = "WorkerKit" -> string!
+const WorkerKit.Hosting.Telemetry.WorkerTelemetry.QueuePendingName = "worker.queue.pending" -> string!
+const WorkerKit.Hosting.Telemetry.WorkerTelemetry.SourceName = "WorkerKit" -> string!
+override WorkerKit.Hosting.Cli.Help.CliArgument.Equals(object? obj) -> bool
+override WorkerKit.Hosting.Cli.Help.CliArgument.GetHashCode() -> int
+override WorkerKit.Hosting.Cli.Help.CliArgument.ToString() -> string!
+override WorkerKit.Hosting.Cli.Help.CliCommand.Equals(object? obj) -> bool
+override WorkerKit.Hosting.Cli.Help.CliCommand.GetHashCode() -> int
+override WorkerKit.Hosting.Cli.Help.CliCommand.ToString() -> string!
+override WorkerKit.Hosting.Cli.Help.CliOption.Equals(object? obj) -> bool
+override WorkerKit.Hosting.Cli.Help.CliOption.GetHashCode() -> int
+override WorkerKit.Hosting.Cli.Help.CliOption.ToString() -> string!
+override WorkerKit.Hosting.InstanceLocation.Equals(object? obj) -> bool
+override WorkerKit.Hosting.InstanceLocation.GetHashCode() -> int
+override WorkerKit.Hosting.InstanceLocation.ToString() -> string!
+override WorkerKit.Hosting.Queues.DeadLetter<T>.Equals(object? obj) -> bool
+override WorkerKit.Hosting.Queues.DeadLetter<T>.GetHashCode() -> int
+override WorkerKit.Hosting.Queues.DeadLetter<T>.ToString() -> string!
+override WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.Equals(object? obj) -> bool
+override WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.GetHashCode() -> int
+override WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.ToString() -> string!
+override WorkerKit.Hosting.Telemetry.TelemetryIdentity.Equals(object? obj) -> bool
+override WorkerKit.Hosting.Telemetry.TelemetryIdentity.GetHashCode() -> int
+override WorkerKit.Hosting.Telemetry.TelemetryIdentity.ToString() -> string!
+override WorkerKit.Hosting.Workers.PeriodicWorker.ExecuteAsync(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.Task!
+override WorkerKit.Hosting.Workers.QueueWorker<T>.ExecuteAsync(System.Threading.CancellationToken stoppingToken) -> System.Threading.Tasks.Task!
+override WorkerKit.Hosting.Workers.QueueWorker<T>.Interval.get -> System.TimeSpan
+override WorkerKit.Hosting.Workers.QueueWorker<T>.IsEnabled.get -> bool
+override WorkerKit.Hosting.Workers.QueueWorker<T>.LogDisabled() -> void
+override WorkerKit.Hosting.Workers.QueueWorker<T>.RunOnceAsync(System.IServiceProvider! services, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
+static WorkerKit.Hosting.AppIdentity.Current.get -> WorkerKit.Abstractions.Identity.WorkerAppIdentity!
+static WorkerKit.Hosting.Cli.Handlers.VersionHandler.Describe() -> string!
+static WorkerKit.Hosting.Cli.Handlers.VersionHandler.Describe(WorkerKit.Abstractions.Identity.WorkerAppIdentity! identity) -> string!
+static WorkerKit.Hosting.Cli.Help.CliArgument.operator !=(WorkerKit.Hosting.Cli.Help.CliArgument? left, WorkerKit.Hosting.Cli.Help.CliArgument? right) -> bool
+static WorkerKit.Hosting.Cli.Help.CliArgument.operator ==(WorkerKit.Hosting.Cli.Help.CliArgument? left, WorkerKit.Hosting.Cli.Help.CliArgument? right) -> bool
+static WorkerKit.Hosting.Cli.Help.CliCommand.operator !=(WorkerKit.Hosting.Cli.Help.CliCommand? left, WorkerKit.Hosting.Cli.Help.CliCommand? right) -> bool
+static WorkerKit.Hosting.Cli.Help.CliCommand.operator ==(WorkerKit.Hosting.Cli.Help.CliCommand? left, WorkerKit.Hosting.Cli.Help.CliCommand? right) -> bool
+static WorkerKit.Hosting.Cli.Help.CliModel.Describe(System.CommandLine.Command! command, WorkerKit.Abstractions.Identity.WorkerAppIdentity? identity = null, string? parentPath = null) -> WorkerKit.Hosting.Cli.Help.CliCommand!
+static WorkerKit.Hosting.Cli.Help.CliOption.operator !=(WorkerKit.Hosting.Cli.Help.CliOption? left, WorkerKit.Hosting.Cli.Help.CliOption? right) -> bool
+static WorkerKit.Hosting.Cli.Help.CliOption.operator ==(WorkerKit.Hosting.Cli.Help.CliOption? left, WorkerKit.Hosting.Cli.Help.CliOption? right) -> bool
+static WorkerKit.Hosting.Cli.Help.HostConfigurationNotes.For(WorkerKit.Abstractions.Identity.WorkerAppIdentity! identity) -> string!
+static WorkerKit.Hosting.Configuration.OptionsSectionCatalog.GetOrCreate(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> WorkerKit.Hosting.Configuration.OptionsSectionCatalog!
+static WorkerKit.Hosting.Configuration.OptionsSectionCatalog.IsSecret(string! key) -> bool
+static WorkerKit.Hosting.DependencyInjection.InfrastructureServiceCollectionExtensions.AddInfrastructure(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static WorkerKit.Hosting.DependencyInjection.OptionsRegistrationExtensions.AddValidatedOptions<TOptions>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! section) -> Microsoft.Extensions.Options.OptionsBuilder<TOptions!>!
+static WorkerKit.Hosting.DependencyInjection.OptionsRegistrationExtensions.RememberSection(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! sectionPath) -> void
+static WorkerKit.Hosting.DependencyInjection.QueueServiceCollectionExtensions.AddInMemoryQueueWorker<TWorker, TPayload, THandler>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, string! workerName) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static WorkerKit.Hosting.DependencyInjection.QueueServiceCollectionExtensions.AddQueueWorker<TWorker, TPayload, THandler>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, string! workerName) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static WorkerKit.Hosting.Health.HealthResponses.HostVersion() -> string!
+static WorkerKit.Hosting.Health.HealthResponses.Match(string! listenUrl, string! absolutePath) -> string?
+static WorkerKit.Hosting.Health.HealthResponses.Serialize(Microsoft.Extensions.Diagnostics.HealthChecks.HealthReport! report, string! instanceName, string! version) -> string!
+static WorkerKit.Hosting.Health.HealthResponses.StatusCode(string! route, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus status) -> int
+static WorkerKit.Hosting.Health.WorkerHeartbeatRules.Evaluate(WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot! worker, System.DateTimeOffset now) -> Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus
+static WorkerKit.Hosting.Health.WorkerHeartbeatRules.Rank(Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus status) -> int
+static WorkerKit.Hosting.Health.WorkerHeartbeatRules.Worse(Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus current, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus candidate) -> Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus
+static WorkerKit.Hosting.Http.HttpClientRegistration.AddResilientJsonClient<TClient, TImplementation, TOptions>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! section) -> Microsoft.Extensions.DependencyInjection.IHttpClientBuilder!
+static WorkerKit.Hosting.InstanceEnvironment.Create(WorkerKit.Hosting.InstanceLocation! location, string! installDirectory, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> WorkerKit.Hosting.InstanceEnvironment!
+static WorkerKit.Hosting.InstanceLocation.operator !=(WorkerKit.Hosting.InstanceLocation? left, WorkerKit.Hosting.InstanceLocation? right) -> bool
+static WorkerKit.Hosting.InstanceLocation.operator ==(WorkerKit.Hosting.InstanceLocation? left, WorkerKit.Hosting.InstanceLocation? right) -> bool
+static WorkerKit.Hosting.InstanceLocator.DirEnv.get -> string!
+static WorkerKit.Hosting.InstanceLocator.NameEnv.get -> string!
+static WorkerKit.Hosting.InstanceLocator.Resolve(string![]! args, System.Func<string!, string?>! env, string! installDir) -> WorkerKit.Hosting.InstanceLocation!
+static WorkerKit.Hosting.InstanceLocator.Resolve(string![]! args, System.Func<string!, string?>! env, string! installDir, WorkerKit.Abstractions.Identity.WorkerAppIdentity! identity) -> WorkerKit.Hosting.InstanceLocation!
+static WorkerKit.Hosting.InstanceLocator.RootEnv.get -> string!
+static WorkerKit.Hosting.InstanceLocator.Validate(string! name) -> string!
+static WorkerKit.Hosting.InstanceLock.Acquire(WorkerKit.Abstractions.Instances.IInstanceContext! instance) -> WorkerKit.Hosting.InstanceLock!
+static WorkerKit.Hosting.Queues.DeadLetter<T>.operator !=(WorkerKit.Hosting.Queues.DeadLetter<T>? left, WorkerKit.Hosting.Queues.DeadLetter<T>? right) -> bool
+static WorkerKit.Hosting.Queues.DeadLetter<T>.operator ==(WorkerKit.Hosting.Queues.DeadLetter<T>? left, WorkerKit.Hosting.Queues.DeadLetter<T>? right) -> bool
+static WorkerKit.Hosting.SerilogHostBuilderExtensions.AddWorkerSerilog(this Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder, WorkerKit.Abstractions.Instances.IInstanceContext! instance, bool enableTelemetry, WorkerKit.Abstractions.Identity.WorkerAppIdentity? application = null) -> void
+static WorkerKit.Hosting.StartupValidation.GetFailures(System.IServiceProvider! services) -> System.Collections.Generic.IReadOnlyList<string!>!
+static WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration) -> WorkerKit.Hosting.Telemetry.OtlpLogExportSettings?
+static WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.IsEnabled(Microsoft.Extensions.Configuration.IConfiguration! configuration) -> bool
+static WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.ParseHeaders(string? raw) -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+static WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.ParseProtocol(string? raw) -> WorkerKit.Hosting.Telemetry.OtlpProtocolKind
+static WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.operator !=(WorkerKit.Hosting.Telemetry.OtlpLogExportSettings? left, WorkerKit.Hosting.Telemetry.OtlpLogExportSettings? right) -> bool
+static WorkerKit.Hosting.Telemetry.OtlpLogExportSettings.operator ==(WorkerKit.Hosting.Telemetry.OtlpLogExportSettings? left, WorkerKit.Hosting.Telemetry.OtlpLogExportSettings? right) -> bool
+static WorkerKit.Hosting.Telemetry.TelemetryExportSuppression.Begin(bool _) -> System.IDisposable!
+static WorkerKit.Hosting.Telemetry.TelemetryIdentity.Create(Microsoft.Extensions.Configuration.IConfiguration! configuration, WorkerKit.Abstractions.Identity.WorkerAppIdentity! application, string! environmentName, WorkerKit.Abstractions.Instances.IInstanceContext! instance) -> WorkerKit.Hosting.Telemetry.TelemetryIdentity!
+static WorkerKit.Hosting.Telemetry.TelemetryIdentity.Create(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! applicationName, string! environmentName, WorkerKit.Abstractions.Instances.IInstanceContext! instance) -> WorkerKit.Hosting.Telemetry.TelemetryIdentity!
+static WorkerKit.Hosting.Telemetry.TelemetryIdentity.ReadServiceVersion() -> string!
+static WorkerKit.Hosting.Telemetry.TelemetryIdentity.operator !=(WorkerKit.Hosting.Telemetry.TelemetryIdentity? left, WorkerKit.Hosting.Telemetry.TelemetryIdentity? right) -> bool
+static WorkerKit.Hosting.Telemetry.TelemetryIdentity.operator ==(WorkerKit.Hosting.Telemetry.TelemetryIdentity? left, WorkerKit.Hosting.Telemetry.TelemetryIdentity? right) -> bool
+static WorkerKit.Hosting.Telemetry.TelemetryShutdown.EnsureStarted(System.IServiceProvider! services) -> void
+static WorkerKit.Hosting.Telemetry.TelemetryShutdown.Flush(System.IServiceProvider! services) -> void
+static WorkerKit.Hosting.Telemetry.TelemetrySourceBuilderExtensions.AddTelemetrySource(this Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder, string! name) -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
+static WorkerKit.Hosting.Telemetry.TelemetrySourceRegistry.Find(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> WorkerKit.Hosting.Telemetry.TelemetrySourceRegistry?
+static WorkerKit.Hosting.Telemetry.TelemetrySourceRegistry.GetOrCreate(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> WorkerKit.Hosting.Telemetry.TelemetrySourceRegistry!
+static WorkerKit.Hosting.Telemetry.WorkerDefaultsExtensions.AddWorkerDefaults(this Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder, WorkerKit.Abstractions.Instances.IInstanceContext! instance, WorkerKit.Abstractions.Identity.WorkerAppIdentity? application = null) -> Microsoft.Extensions.Hosting.IHostApplicationBuilder!
+static WorkerKit.Hosting.Telemetry.WorkerTelemetry.Source.get -> System.Diagnostics.ActivitySource!
+static WorkerKit.Hosting.WorkerApp.CreateBuilder<TProgram>(string![]! args, System.Action<WorkerKit.Hosting.WorkerAppOptions!>? configure = null) -> WorkerKit.Hosting.WorkerAppBuilder!
+static WorkerKit.Hosting.WorkerApplicationBuilderExtensions.GetInstance(this Microsoft.Extensions.Hosting.IHostApplicationBuilder! builder) -> WorkerKit.Abstractions.Instances.IInstanceContext!
+static WorkerKit.Hosting.WorkerCommands.Create(string![]! args, WorkerKit.Abstractions.Identity.WorkerAppIdentity? identity = null) -> WorkerKit.Hosting.WorkerCommands!
+static WorkerKit.Hosting.WorkerHostBuilder.Create(string![]! args, string? contentRoot = null, string? environmentName = null, System.Action<Microsoft.Extensions.Hosting.HostApplicationBuilder!>? configure = null, bool enableTelemetry = false, WorkerKit.Abstractions.Identity.WorkerAppIdentity? identity = null, System.Action<Microsoft.Extensions.Hosting.IHostApplicationBuilder!>? configureHost = null, bool operatingSystemIntegration = true) -> Microsoft.Extensions.Hosting.HostApplicationBuilder!
+static WorkerKit.Hosting.WorkerHostDefaults.ApplicationName.get -> string!
+static WorkerKit.Hosting.WorkerHostDefaults.ServiceName.get -> string!
+static WorkerKit.Hosting.WorkerHostDefaults.ServiceNameFor(string! instanceName) -> string!
+virtual WorkerKit.Hosting.Workers.PeriodicWorker.IsEnabled.get -> bool
+virtual WorkerKit.Hosting.Workers.PeriodicWorker.LogDisabled() -> void
+virtual WorkerKit.Hosting.Workers.PeriodicWorker.OnStartingAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!

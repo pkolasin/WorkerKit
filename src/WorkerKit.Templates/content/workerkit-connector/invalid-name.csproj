@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    The template engine cannot regex-validate a parameter before it writes files (dotnet/templating#2038).
+    This project is included only when the name fails ^[A-Za-z][A-Za-z0-9]*(\.[A-Za-z][A-Za-z0-9]*)*$.
+    The restore post-action runs it and dotnet new exits 105.
+  -->
+  <Target Name="RejectConnectorName" BeforeTargets="Restore">
+    <Error Text="Connector name 'CONNECTOR_NAME_VALUE' is not allowed. Use one or more segments of letters and digits separated by dots. Each segment must start with a letter." />
+  </Target>
+</Project>

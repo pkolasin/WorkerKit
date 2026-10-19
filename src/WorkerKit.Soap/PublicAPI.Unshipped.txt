@@ -1,0 +1,4 @@
+#nullable enable
+WorkerKit.Soap.SoapChannel
+static WorkerKit.Soap.SoapChannel.AbortUnlessCompleted(System.ServiceModel.ICommunicationObject! channel, bool completed) -> void
+static WorkerKit.Soap.SoapChannel.CreateBasicHttpBinding(System.Uri! endpoint, System.TimeSpan timeout) -> System.ServiceModel.BasicHttpBinding!

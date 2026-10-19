@@ -1,0 +1,15 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>__TARGET_FRAMEWORK__</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <IsPackable>false</IsPackable>
+    <Company>Contoso.Billing</Company>
+    <Version>1.0.0</Version>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <Deterministic>true</Deterministic>
+    <IsPackable>false</IsPackable>
+    <Company>WorkerKit</Company>
+    <Product>WorkerKit</Product>
+    <Version>1.0.0</Version>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>WorkerKit.Samples.Outbound</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <Description>Sample outbound MQTT and SMS queue. Not a published package.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\WorkerKit.Hosting\WorkerKit.Hosting.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MQTTnet" />
+  </ItemGroup>
+</Project>

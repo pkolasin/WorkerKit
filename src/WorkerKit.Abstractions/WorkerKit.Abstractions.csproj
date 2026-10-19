@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
+    <TargetFramework></TargetFramework>
+    <IsPackable>true</IsPackable>
+    <RootNamespace>WorkerKit.Abstractions</RootNamespace>
+    <IsAotCompatible>true</IsAotCompatible>
+    <Description>Contracts for WorkerKit workers: queues, heartbeats, instance context, application identity, options, and reflection-free commands.</Description>
+    <PackageDescription>Contracts for WorkerKit workers: queues, heartbeats, instance context, application identity, options, and reflection-free commands.</PackageDescription>
+    <PackageTags>workerkit;worker;abstractions</PackageTags>
+  </PropertyGroup>
+</Project>

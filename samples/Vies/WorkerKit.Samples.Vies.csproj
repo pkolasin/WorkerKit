@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>WorkerKit.Samples.Vies</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <Description>Sample EU VIES SOAP client and queue worker. Not a published package.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\WorkerKit.Hosting\WorkerKit.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\WorkerKit.Soap\WorkerKit.Soap.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.ServiceModel.Http" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Generated\CheckVatService.cs">
+      <Nullable>disable</Nullable>
+    </Compile>
+  </ItemGroup>
+</Project>

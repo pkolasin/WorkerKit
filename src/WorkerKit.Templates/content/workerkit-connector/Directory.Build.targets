@@ -1,0 +1,5 @@
+<Project>
+  <!-- UseLocalWorkerKit is the path of a WorkerKit checkout. ProjectReference does not import package targets, so publish would skip deploy/. -->
+  <Import Project="$(UseLocalWorkerKit)/src/WorkerKit.Hosting/build/WorkerKit.Hosting.targets"
+          Condition="'$(UseLocalWorkerKit)' != '' and ('$(OutputType)' == 'Exe' or '$(OutputType)' == 'exe' or '$(OutputType)' == 'WinExe') and Exists('$(UseLocalWorkerKit)/src/WorkerKit.Hosting/build/WorkerKit.Hosting.targets')" />
+</Project>

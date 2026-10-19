@@ -1,0 +1,254 @@
+{
+  "$schema": "https://json.schemastore.org/template",
+  "author": "WorkerKit",
+  "classifications": [
+    "Worker",
+    "Console",
+    "WorkerKit"
+  ],
+  "identity": "WorkerKit.Templates.Connector",
+  "name": "WorkerKit connector",
+  "description": "A thin WorkerKit connector: periodic worker, one command, resilient HTTP client, tests, and optional Docker and queue samples. The name must be letter-led identifier segments separated by dots, for example Contoso.Billing.",
+  "shortName": "workerkit-connector",
+  "defaultName": "Contoso.Billing",
+  "sourceName": "Contoso.Billing",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "solution"
+  },
+  "symbols": {
+    "env-prefix": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "",
+      "description": "Environment variable prefix. Letters and digits. Empty derives it from the name."
+    },
+    "framework": {
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "net10.0"
+        },
+        {
+          "choice": "net8.0"
+        }
+      ],
+      "defaultValue": "net10.0",
+      "replaces": "__TARGET_FRAMEWORK__",
+      "description": "Target framework of the host and the tests."
+    },
+    "workerkit-version": {
+      "type": "parameter",
+      "datatype": "string",
+      "defaultValue": "__WORKERKIT_VERSION__",
+      "replaces": "WKVER",
+      "description": "Version of the WorkerKit packages. The default is the version of this template package."
+    },
+    "queue": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Add a sample in-memory queue worker."
+    },
+    "docker": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true",
+      "description": "Include a Dockerfile and .dockerignore."
+    },
+    "nameAlnum": {
+      "type": "generated",
+      "generator": "regex",
+      "parameters": {
+        "source": "name",
+        "steps": [
+          {
+            "regex": "[^A-Za-z0-9]",
+            "replacement": ""
+          }
+        ]
+      },
+      "replaces": "ContosoBilling"
+    },
+    "namePrefix": {
+      "type": "generated",
+      "generator": "casing",
+      "parameters": {
+        "source": "nameAlnum",
+        "toLower": false
+      }
+    },
+    "kebabRaw": {
+      "type": "generated",
+      "generator": "regex",
+      "parameters": {
+        "source": "name",
+        "steps": [
+          {
+            "regex": "[._ /]+",
+            "replacement": "-"
+          },
+          {
+            "regex": "([a-z0-9])([A-Z])",
+            "replacement": "$1-$2"
+          },
+          {
+            "regex": "([A-Z])([A-Z][a-z])",
+            "replacement": "$1-$2"
+          }
+        ]
+      }
+    },
+    "kebabName": {
+      "type": "generated",
+      "generator": "casing",
+      "parameters": {
+        "source": "kebabRaw",
+        "toLower": true
+      },
+      "replaces": "contoso-billing"
+    },
+    "effectiveEnvPrefix": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "env-prefix",
+        "fallbackVariableName": "namePrefix"
+      },
+      "replaces": "CONTOSOBILLING"
+    },
+    "imageTag": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "string",
+      "replaces": "__DOTNET_IMAGE_TAG__",
+      "parameters": {
+        "cases": [
+          {
+            "condition": "(framework == \"net8.0\")",
+            "value": "8.0"
+          },
+          {
+            "condition": "(framework == \"net10.0\")",
+            "value": "10.0"
+          }
+        ]
+      }
+    },
+    "sdkVersion": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "string",
+      "replaces": "__SDK_VERSION__",
+      "parameters": {
+        "cases": [
+          {
+            "condition": "(framework == \"net8.0\")",
+            "value": "8.0.100"
+          },
+          {
+            "condition": "(framework == \"net10.0\")",
+            "value": "10.0.100"
+          }
+        ]
+      }
+    },
+    "nameIsValid": {
+      "type": "generated",
+      "generator": "regexMatch",
+      "datatype": "bool",
+      "parameters": {
+        "source": "name",
+        "pattern": "^[A-Za-z][A-Za-z0-9]*(\\.[A-Za-z][A-Za-z0-9]*)*$"
+      }
+    },
+    "rejectedName": {
+      "type": "generated",
+      "generator": "regex",
+      "datatype": "string",
+      "replaces": "CONNECTOR_NAME_VALUE",
+      "parameters": {
+        "source": "name",
+        "steps": [
+          {
+            "regex": "^[\\s\\S]*$",
+            "replacement": "$0"
+          }
+        ]
+      }
+    },
+    "userSecretsId": {
+      "type": "generated",
+      "generator": "guid",
+      "replaces": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee",
+      "parameters": {
+        "format": "D"
+      }
+    }
+  },
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "condition": "(queue == false)",
+          "exclude": [
+            "**/Queue/**"
+          ]
+        },
+        {
+          "condition": "(docker == false)",
+          "exclude": [
+            "Dockerfile",
+            ".dockerignore"
+          ]
+        },
+        {
+          "condition": "(nameIsValid)",
+          "exclude": [
+            "invalid-name.csproj"
+          ]
+        },
+        {
+          "condition": "(!nameIsValid)",
+          "exclude": [
+            "src/**",
+            "tests/**",
+            "doc/**",
+            ".github/**",
+            "Dockerfile",
+            ".dockerignore",
+            "Directory.Build.props",
+            "Directory.Build.targets",
+            "Directory.Packages.props",
+            "Contoso.Billing.sln",
+            "README.md",
+            "global.json",
+            "nuget.config",
+            ".editorconfig",
+            ".gitignore"
+          ]
+        }
+      ]
+    }
+  ],
+  "postActions": [
+    {
+      "condition": "(!nameIsValid)",
+      "description": "Reject a connector name that is not dotted identifiers.",
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": false,
+      "args": {
+        "files": [
+          "invalid-name.csproj"
+        ]
+      },
+      "manualInstructions": [
+        {
+          "text": "Use a name of letter-led identifier segments separated by dots, for example Contoso.Billing."
+        }
+      ]
+    }
+  ]
+}

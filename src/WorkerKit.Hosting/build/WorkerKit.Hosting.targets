@@ -1,0 +1,427 @@
+<Project>
+  <!-- Empty means copy deploy scripts and write workerkit.app.json. -p:WorkerKitDeployScripts=false opts out. -->
+  <PropertyGroup>
+    <WorkerKitDeployScripts Condition="'$(WorkerKitDeployScripts)' == ''">true</WorkerKitDeployScripts>
+  </PropertyGroup>
+
+  <UsingTask TaskName="GenerateWorkerKitDeploy" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <PublishDir ParameterType="System.String" Required="true" />
+      <ScriptSource ParameterType="System.String" Required="true" />
+      <AssemblyName ParameterType="System.String" Required="true" />
+      <Product ParameterType="System.String" />
+      <Version ParameterType="System.String" />
+      <InformationalVersion ParameterType="System.String" />
+      <WorkerKitAppName ParameterType="System.String" />
+      <WorkerKitServiceName ParameterType="System.String" />
+      <WorkerKitEnvPrefix ParameterType="System.String" />
+      <WorkerKitDisplayName ParameterType="System.String" />
+    </ParameterGroup>
+    <Task>
+      <Code Type="Class" Language="cs"><![CDATA[
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Text;
+
+public class GenerateWorkerKitDeploy : Task
+{
+    [Required] public string PublishDir { get; set; }
+    [Required] public string ScriptSource { get; set; }
+    [Required] public string AssemblyName { get; set; }
+    public string Product { get; set; }
+    public string Version { get; set; }
+    public string InformationalVersion { get; set; }
+    public string WorkerKitAppName { get; set; }
+    public string WorkerKitServiceName { get; set; }
+    public string WorkerKitEnvPrefix { get; set; }
+    public string WorkerKitDisplayName { get; set; }
+
+    public override bool Execute()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(PublishDir))
+            {
+                Log.LogError("PublishDir is empty.");
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(ScriptSource) || !Directory.Exists(ScriptSource))
+            {
+                Log.LogError("WorkerKit deploy scripts were not found at '" + ScriptSource + "'.");
+                return false;
+            }
+
+            var name = string.IsNullOrWhiteSpace(WorkerKitAppName)
+                ? ReadProductName(Product, AssemblyName)
+                : WorkerKitAppName.Trim();
+            var serviceName = string.IsNullOrWhiteSpace(WorkerKitServiceName) ? name : WorkerKitServiceName.Trim();
+            var envPrefix = string.IsNullOrWhiteSpace(WorkerKitEnvPrefix)
+                ? DeriveEnvPrefix(name)
+                : NormalizeEnvPrefix(WorkerKitEnvPrefix);
+            var displayName = string.IsNullOrWhiteSpace(WorkerKitDisplayName) ? serviceName : WorkerKitDisplayName.Trim();
+            var version = ReadVersion(InformationalVersion, Version);
+            var kebab = ToKebabCase(name);
+            var assemblyName = AssemblyName.Trim();
+            RequireFileName(serviceName, "service name");
+            RequireFileName(kebab, "kebab name");
+            RequireFileName(assemblyName, "assembly name");
+
+            var publishDir = Path.GetFullPath(PublishDir);
+            var windowsDest = Path.Combine(publishDir, "deploy", "windows");
+            var systemdDest = Path.Combine(publishDir, "deploy", "systemd");
+            Directory.CreateDirectory(windowsDest);
+            Directory.CreateDirectory(systemdDest);
+            CopyScripts(Path.Combine(ScriptSource, "windows"), windowsDest, "*.ps1");
+            CopyScripts(Path.Combine(ScriptSource, "systemd"), systemdDest, "*.sh");
+
+            var linuxInstall = "/opt/" + kebab;
+            var linuxInstances = "/var/lib/" + kebab;
+            var windowsInstall = "C:\\Program Files\\" + name;
+            var windowsInstances = "%ProgramData%\\" + name + "\\instances";
+            var linuxExe = assemblyName;
+            var windowsExe = assemblyName + ".exe";
+            var assemblyFile = assemblyName + ".dll";
+
+            var manifest = new StringBuilder();
+            manifest.Append("{\n");
+            AppendProperty(manifest, "name", name, true);
+            AppendProperty(manifest, "serviceName", serviceName, true);
+            AppendProperty(manifest, "displayName", displayName, true);
+            AppendProperty(manifest, "envPrefix", envPrefix, true);
+            AppendProperty(manifest, "version", version, true);
+            AppendProperty(manifest, "assemblyName", assemblyName, true);
+            AppendProperty(manifest, "windowsExecutable", windowsExe, true);
+            AppendProperty(manifest, "linuxExecutable", linuxExe, true);
+            AppendProperty(manifest, "assemblyFile", assemblyFile, true);
+            AppendProperty(manifest, "kebabName", kebab, true);
+            AppendProperty(manifest, "windowsInstallPath", windowsInstall, true);
+            AppendProperty(manifest, "linuxInstallPath", linuxInstall, true);
+            AppendProperty(manifest, "windowsInstancesRoot", windowsInstances, true);
+            AppendProperty(manifest, "linuxInstancesRoot", linuxInstances, false);
+            manifest.Append("}\n");
+
+            var utf8 = new UTF8Encoding(false);
+            var manifestPath = Path.Combine(publishDir, "workerkit.app.json");
+            File.WriteAllText(manifestPath, manifest.ToString(), utf8);
+            File.WriteAllText(
+                Path.Combine(systemdDest, serviceName + ".service"),
+                DefaultUnit(displayName, serviceName, linuxInstall, linuxExe),
+                utf8);
+            File.WriteAllText(
+                Path.Combine(systemdDest, kebab + "@.service"),
+                TemplateUnit(name, kebab, linuxInstall, linuxExe, linuxInstances),
+                utf8);
+
+            Log.LogMessage(MessageImportance.High, "WorkerKit wrote " + manifestPath);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Log.LogErrorFromException(ex, true);
+            return false;
+        }
+    }
+
+    private static void CopyScripts(string sourceDir, string destinationDir, string pattern)
+    {
+        if (!Directory.Exists(sourceDir))
+        {
+            throw new InvalidOperationException("Missing deploy script directory '" + sourceDir + "'.");
+        }
+
+        var makeExecutable = pattern == "*.sh" && Path.DirectorySeparatorChar != '\\';
+        foreach (var file in Directory.GetFiles(sourceDir, pattern))
+        {
+            var fileName = Path.GetFileName(file);
+            if (fileName.EndsWith(".Tests.ps1", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var destination = Path.Combine(destinationDir, fileName);
+            File.Copy(file, destination, true);
+            if (makeExecutable)
+            {
+                var chmod = Process.Start("chmod", "+x \"" + destination + "\"");
+                if (chmod == null)
+                {
+                    throw new InvalidOperationException("Could not start chmod for " + destination);
+                }
+
+                chmod.WaitForExit();
+                if (chmod.ExitCode != 0)
+                {
+                    throw new InvalidOperationException("chmod failed for " + destination);
+                }
+            }
+        }
+    }
+
+    private static string DefaultUnit(string displayName, string serviceName, string installDir, string exe)
+    {
+        var exePath = installDir + "/" + exe;
+        return
+            "[Unit]\n" +
+            "Description=" + displayName + " worker host\n" +
+            "After=network-online.target\n" +
+            "Wants=network-online.target\n" +
+            "\n" +
+            "[Service]\n" +
+            "Type=notify\n" +
+            "User=" + serviceName + "\n" +
+            "Group=" + serviceName + "\n" +
+            "WorkingDirectory=" + installDir + "\n" +
+            "ExecStart=\"" + exePath + "\" run\n" +
+            "Restart=on-failure\n" +
+            "RestartSec=5\n" +
+            "TimeoutStopSec=30\n" +
+            "Environment=DOTNET_ENVIRONMENT=Production\n" +
+            "Environment=DOTNET_NOLOGO=1\n" +
+            "SyslogIdentifier=" + serviceName + "\n" +
+            "\n" +
+            "[Install]\n" +
+            "WantedBy=multi-user.target\n";
+    }
+
+    private static string TemplateUnit(string name, string kebab, string installDir, string exe, string instancesRoot)
+    {
+        var exePath = installDir + "/" + exe;
+        var instanceDir = instancesRoot + "/%i";
+        return
+            "[Unit]\n" +
+            "Description=" + name + " instance %i\n" +
+            "After=network-online.target\n" +
+            "Wants=network-online.target\n" +
+            "\n" +
+            "[Service]\n" +
+            "Type=notify\n" +
+            "User=" + kebab + "\n" +
+            "Group=" + kebab + "\n" +
+            "StateDirectory=" + kebab + "/%i\n" +
+            "WorkingDirectory=" + instanceDir + "\n" +
+            "ExecStart=\"" + exePath + "\" run --instance-dir \"" + instanceDir + "\" --instance %i\n" +
+            "Environment=DOTNET_ENVIRONMENT=Production\n" +
+            "SyslogIdentifier=" + kebab + "-%i\n" +
+            "Restart=on-failure\n" +
+            "RestartSec=5\n" +
+            "TimeoutStopSec=30\n" +
+            "\n" +
+            "[Install]\n" +
+            "WantedBy=multi-user.target\n";
+    }
+
+    private static void AppendProperty(StringBuilder manifest, string key, string value, bool comma)
+    {
+        manifest.Append("  \"");
+        manifest.Append(key);
+        manifest.Append("\": ");
+        manifest.Append(JsonString(value));
+        if (comma)
+        {
+            manifest.Append(',');
+        }
+
+        manifest.Append('\n');
+    }
+
+    private static string JsonString(string value)
+    {
+        var builder = new StringBuilder(value.Length + 2);
+        builder.Append('"');
+        foreach (var character in value)
+        {
+            switch (character)
+            {
+                case '\\':
+                    builder.Append("\\\\");
+                    break;
+                case '"':
+                    builder.Append("\\\"");
+                    break;
+                case '\n':
+                    builder.Append("\\n");
+                    break;
+                case '\r':
+                    builder.Append("\\r");
+                    break;
+                case '\t':
+                    builder.Append("\\t");
+                    break;
+                default:
+                    if (character < ' ')
+                    {
+                        builder.Append("\\u");
+                        builder.Append(((int)character).ToString("x4"));
+                    }
+                    else
+                    {
+                        builder.Append(character);
+                    }
+
+                    break;
+            }
+        }
+
+        builder.Append('"');
+        return builder.ToString();
+    }
+
+    private static string ReadProductName(string product, string assemblyName)
+    {
+        if (!string.IsNullOrWhiteSpace(product))
+        {
+            return product.Trim();
+        }
+
+        if (string.IsNullOrWhiteSpace(assemblyName))
+        {
+            throw new InvalidOperationException("Assembly has no product name.");
+        }
+
+        var simple = assemblyName.Trim();
+        const string hostSuffix = ".Host";
+        if (simple.EndsWith(hostSuffix, StringComparison.Ordinal) && simple.Length > hostSuffix.Length)
+        {
+            simple = simple.Substring(0, simple.Length - hostSuffix.Length);
+        }
+
+        return simple;
+    }
+
+    private static string ReadVersion(string informational, string version)
+    {
+        if (!string.IsNullOrWhiteSpace(informational))
+        {
+            var plus = informational.IndexOf('+');
+            return plus > 0 ? informational.Substring(0, plus) : informational;
+        }
+
+        return string.IsNullOrWhiteSpace(version) ? "unknown" : version;
+    }
+
+    private static string DeriveEnvPrefix(string name)
+    {
+        var chars = new StringBuilder(name.Length);
+        foreach (var character in name)
+        {
+            if (IsAsciiLetterOrDigit(character))
+            {
+                chars.Append(character);
+            }
+        }
+
+        if (chars.Length == 0)
+        {
+            throw new InvalidOperationException("Application name has no letters or digits to form an environment prefix.");
+        }
+
+        return chars.ToString().ToUpperInvariant();
+    }
+
+    private static string NormalizeEnvPrefix(string prefix)
+    {
+        var trimmed = prefix.Trim();
+        if (trimmed.Length == 0)
+        {
+            throw new InvalidOperationException("Environment variable prefix must contain only letters and digits.");
+        }
+
+        foreach (var character in trimmed)
+        {
+            if (!IsAsciiLetterOrDigit(character))
+            {
+                throw new InvalidOperationException("Environment variable prefix must contain only letters and digits.");
+            }
+        }
+
+        return trimmed.ToUpperInvariant();
+    }
+
+    private static bool IsAsciiLetterOrDigit(char character)
+    {
+        return (character >= '0' && character <= '9')
+            || (character >= 'A' && character <= 'Z')
+            || (character >= 'a' && character <= 'z');
+    }
+
+    // Same boundary rules as WorkerAppIdentity.ToKebabCase.
+    private static string ToKebabCase(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            throw new InvalidOperationException("Application name has no characters for a directory name.");
+        }
+
+        var builder = new StringBuilder(name.Length + 8);
+        for (var index = 0; index < name.Length; index++)
+        {
+            var current = name[index];
+            if (current == '.' || current == '_' || current == ' ' || current == '-' || current == '/')
+            {
+                if (builder.Length > 0 && builder[builder.Length - 1] != '-')
+                {
+                    builder.Append('-');
+                }
+
+                continue;
+            }
+
+            if (char.IsUpper(current))
+            {
+                var previous = index > 0 ? name[index - 1] : '\0';
+                var next = index + 1 < name.Length ? name[index + 1] : '\0';
+                var boundary = char.IsLower(previous) || char.IsDigit(previous)
+                    || (char.IsUpper(previous) && char.IsLower(next));
+                if (boundary && builder.Length > 0 && builder[builder.Length - 1] != '-')
+                {
+                    builder.Append('-');
+                }
+
+                builder.Append(char.ToLowerInvariant(current));
+                continue;
+            }
+
+            builder.Append(char.ToLowerInvariant(current));
+        }
+
+        var kebab = builder.ToString().Trim('-');
+        if (kebab.Length == 0)
+        {
+            throw new InvalidOperationException("Application name has no characters for a directory name.");
+        }
+
+        return kebab;
+    }
+
+    private static void RequireFileName(string value, string label)
+    {
+        if (value.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || value.IndexOf('/') >= 0 || value.IndexOf('\\') >= 0)
+        {
+            throw new InvalidOperationException("The " + label + " '" + value + "' cannot be used as a file name.");
+        }
+    }
+}
+]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="CopyWorkerKitDeployScripts"
+          AfterTargets="Publish"
+          Condition="'$(WorkerKitDeployScripts)' == 'true' and ('$(OutputType)' == 'Exe' or '$(OutputType)' == 'exe' or '$(OutputType)' == 'WinExe')">
+    <GenerateWorkerKitDeploy
+      PublishDir="$(PublishDir)"
+      ScriptSource="$(MSBuildThisFileDirectory)deploy"
+      AssemblyName="$(AssemblyName)"
+      Product="$(Product)"
+      Version="$(Version)"
+      InformationalVersion="$(InformationalVersion)"
+      WorkerKitAppName="$(WorkerKitAppName)"
+      WorkerKitServiceName="$(WorkerKitServiceName)"
+      WorkerKitEnvPrefix="$(WorkerKitEnvPrefix)"
+      WorkerKitDisplayName="$(WorkerKitDisplayName)" />
+  </Target>
+</Project>
