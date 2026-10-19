@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <RootNamespace>Contoso.Billing</RootNamespace>
+    <AssemblyName>Contoso.Billing.Host</AssemblyName>
+    <Product>Contoso.Billing</Product>
+    <UserSecretsId>aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee</UserSecretsId>
+    <WorkerKitEnvPrefix>CONTOSOBILLING</WorkerKitEnvPrefix>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(UseLocalWorkerKit)' == ''">
+    <PackageReference Include="WorkerKit.Hosting" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseLocalWorkerKit)' != ''">
+    <ProjectReference Include="$(UseLocalWorkerKit)/src/WorkerKit.Hosting/WorkerKit.Hosting.csproj" />
+  </ItemGroup>
+</Project>
