@@ -1,4 +1,3 @@
-
 using WorkerKit.Hosting.Queues;
 
 using WorkerKit.Abstractions.Queues;
