@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <RootNamespace>ExampleHost</RootNamespace>
+    <AssemblyName>ExampleHost</AssemblyName>
+    <Product>WorkerKitExample</Product>
+    <Version>1.0.0</Version>
+    <InformationalVersion>1.0.0</InformationalVersion>
+    <UserSecretsId>7f3c1a2e-6b54-4d8e-9a10-2c5e8f0b1d44</UserSecretsId>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WorkerKit.Hosting\WorkerKit.Hosting.csproj" />
+    <ProjectReference Include="..\..\samples\Vies\WorkerKit.Samples.Vies.csproj" />
+    <ProjectReference Include="..\..\samples\OpenMeteo\WorkerKit.Samples.OpenMeteo.csproj" />
+    <ProjectReference Include="..\..\samples\Outbound\WorkerKit.Samples.Outbound.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="appsettings.Development.json" CopyToPublishDirectory="Never" />
+  </ItemGroup>
+</Project>
