@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>WorkerKit.Samples.OpenMeteo</RootNamespace>
+    <IsPackable>false</IsPackable>
+    <Description>Sample Open-Meteo forecast worker. Not a published package.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\WorkerKit.Hosting\WorkerKit.Hosting.csproj" />
+  </ItemGroup>
+</Project>
