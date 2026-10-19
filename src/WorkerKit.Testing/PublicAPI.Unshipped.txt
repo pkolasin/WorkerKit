@@ -1,0 +1,47 @@
+#nullable enable
+WorkerKit.Testing.CliReference
+WorkerKit.Testing.CommandCapture
+WorkerKit.Testing.CommandCapture.CommandCapture(int exitCode, string! standardOutput, string! standardError) -> void
+WorkerKit.Testing.CommandCapture.ExitCode.get -> int
+WorkerKit.Testing.CommandCapture.StandardError.get -> string!
+WorkerKit.Testing.CommandCapture.StandardOutput.get -> string!
+WorkerKit.Testing.InMemoryQueue
+WorkerKit.Testing.TestCommandArgs
+WorkerKit.Testing.TestCommandArgs.Get<T>(WorkerKit.Abstractions.Commands.CommandArgument<T>! argument) -> T
+WorkerKit.Testing.TestCommandArgs.Get<T>(WorkerKit.Abstractions.Commands.CommandOption<T>! option) -> T
+WorkerKit.Testing.TestCommandArgs.IsSet<T>(WorkerKit.Abstractions.Commands.CommandOption<T>! option) -> bool
+WorkerKit.Testing.TestCommandArgs.Set<T>(WorkerKit.Abstractions.Commands.CommandArgument<T>! argument, T value) -> WorkerKit.Testing.TestCommandArgs!
+WorkerKit.Testing.TestCommandArgs.Set<T>(WorkerKit.Abstractions.Commands.CommandOption<T>! option, T value) -> WorkerKit.Testing.TestCommandArgs!
+WorkerKit.Testing.TestCommandArgs.TestCommandArgs() -> void
+WorkerKit.Testing.WorkerAppTester
+WorkerKit.Testing.WorkerAppTester.Commands.get -> WorkerKit.Hosting.WorkerCommands!
+WorkerKit.Testing.WorkerAppTester.Dispose() -> void
+WorkerKit.Testing.WorkerAppTester.DisposeAsync() -> System.Threading.Tasks.ValueTask
+WorkerKit.Testing.WorkerAppTester.Host.get -> Microsoft.Extensions.Hosting.IHost!
+WorkerKit.Testing.WorkerAppTester.Identity.get -> WorkerKit.Abstractions.Identity.WorkerAppIdentity!
+WorkerKit.Testing.WorkerAppTester.InstanceDirectory.get -> string!
+WorkerKit.Testing.WorkerAppTester.RunBatchAsync<TWorker>(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<WorkerKit.Hosting.Workers.WorkerIterationResult!>!
+WorkerKit.Testing.WorkerAppTester.RunCommandAsync(params string![]! args) -> System.Threading.Tasks.Task<WorkerKit.Testing.CommandCapture!>!
+WorkerKit.Testing.WorkerAppTester.RunIterationAsync<TWorker>(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<WorkerKit.Hosting.Workers.WorkerIterationResult!>!
+WorkerKit.Testing.WorkerAppTester.Services.get -> System.IServiceProvider!
+WorkerKit.Testing.WorkerAppTester.Time.get -> Microsoft.Extensions.Time.Testing.FakeTimeProvider!
+WorkerKit.Testing.WorkerAppTesterBuilder
+WorkerKit.Testing.WorkerAppTesterBuilder.Build() -> WorkerKit.Testing.WorkerAppTester!
+WorkerKit.Testing.WorkerAppTesterBuilder.ConfigureApp(System.Action<WorkerKit.Hosting.WorkerAppBuilder!>! configure) -> WorkerKit.Testing.WorkerAppTesterBuilder!
+WorkerKit.Testing.WorkerAppTesterBuilder.ConfigureHost(System.Action<Microsoft.Extensions.Hosting.IHostApplicationBuilder!>! configure) -> WorkerKit.Testing.WorkerAppTesterBuilder!
+WorkerKit.Testing.WorkerAppTesterBuilder.ConfigureServices(System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!>! configure) -> WorkerKit.Testing.WorkerAppTesterBuilder!
+WorkerKit.Testing.WorkerAppTesterBuilder.EnableTelemetry(bool enable = true) -> WorkerKit.Testing.WorkerAppTesterBuilder!
+WorkerKit.Testing.WorkerAppTesterBuilder.Environment(string! environmentName) -> WorkerKit.Testing.WorkerAppTesterBuilder!
+WorkerKit.Testing.WorkerAppTesterBuilder.Time.get -> Microsoft.Extensions.Time.Testing.FakeTimeProvider!
+WorkerKit.Testing.WorkerAppTesterBuilder.UseSetting(string! key, string? value) -> WorkerKit.Testing.WorkerAppTesterBuilder!
+WorkerKit.Testing.WorkerAppTesterBuilder.UseSettings(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string!, string?>>! settings) -> WorkerKit.Testing.WorkerAppTesterBuilder!
+WorkerKit.Testing.WorkerKitAssertException
+WorkerKit.Testing.WorkerKitAssertException.WorkerKitAssertException(string! message) -> void
+WorkerKit.Testing.WorkerKitAssertException.WorkerKitAssertException(string! message, System.Exception! innerException) -> void
+const WorkerKit.Testing.CliReference.UpdateVariable = "WORKERKIT_UPDATE_CLI_DOC" -> string!
+static WorkerKit.Testing.InMemoryQueue.DeadLetters<T>(System.IServiceProvider! services) -> System.Collections.Generic.IReadOnlyList<WorkerKit.Hosting.Queues.DeadLetter<T>!>!
+static WorkerKit.Testing.InMemoryQueue.Of<T>(System.IServiceProvider! services) -> WorkerKit.Hosting.Queues.InMemoryWorkQueue<T>!
+static WorkerKit.Testing.InMemoryQueue.Pending<T>(System.IServiceProvider! services) -> long
+static WorkerKit.Testing.TestCommandArgs.With<T>(WorkerKit.Abstractions.Commands.CommandArgument<T>! argument, T value) -> WorkerKit.Testing.TestCommandArgs!
+static WorkerKit.Testing.TestCommandArgs.With<T>(WorkerKit.Abstractions.Commands.CommandOption<T>! option, T value) -> WorkerKit.Testing.TestCommandArgs!
+static WorkerKit.Testing.WorkerAppTester.Create<TProgram>(System.Action<WorkerKit.Hosting.WorkerAppOptions!>? identity = null) -> WorkerKit.Testing.WorkerAppTesterBuilder!
