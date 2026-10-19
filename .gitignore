@@ -1,0 +1,15 @@
+bin/
+obj/
+logs/
+data/
+temp/
+TestResults/
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+.soapgen/
+appsettings.Local.json
+*.DotSettings.user
+artifacts/
