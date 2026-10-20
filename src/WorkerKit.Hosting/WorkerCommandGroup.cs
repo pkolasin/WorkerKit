@@ -23,6 +23,9 @@ public sealed class WorkerCommandGroup
         _plan = plan;
     }
 
+    /// <summary>Adds <typeparamref name="TCommand"/> to this group.</summary>
+    /// <typeparam name="TCommand">Command type. Its <see cref="IWorkerCommand.Spec"/> supplies the name and symbols.</typeparam>
+    /// <returns>This group.</returns>
     public WorkerCommandGroup Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TCommand>()
         where TCommand : class, IWorkerCommand
     {
@@ -32,6 +35,12 @@ public sealed class WorkerCommandGroup
         return this;
     }
 
+    /// <summary>Adds a nested group and runs <paramref name="configure"/> before the group is attached.</summary>
+    /// <param name="name">Group name.</param>
+    /// <param name="description">Group description.</param>
+    /// <param name="configure">Callback that adds commands to the new group.</param>
+    /// <returns>This group.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="configure"/> is null.</exception>
     public WorkerCommandGroup AddGroup(string name, string description, Action<WorkerCommandGroup> configure)
     {
         ArgumentNullException.ThrowIfNull(configure);

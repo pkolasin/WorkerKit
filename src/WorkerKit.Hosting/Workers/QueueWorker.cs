@@ -10,6 +10,34 @@ namespace WorkerKit.Hosting.Workers;
 /// Built on <see cref="PeriodicWorker"/>, so an empty queue is a successful heartbeat and a failed claim degrades readiness.
 /// Each item gets its own scope and, when <c>run</c> enabled telemetry, a child span of the iteration span.
 /// </summary>
+/// <typeparam name="T">Payload claimed from the queue and passed to <see cref="IWorkItemHandler{T}"/>.</typeparam>
+/// <remarks>
+/// <see cref="IsEnabled"/> reads <see cref="QueueWorkerOptions.Enabled"/>, which defaults to false.
+/// When that flag is false the hosted loop logs once and does not register a heartbeat.
+/// <see cref="RunBatchAsync"/> ignores the flag. An empty claim is still a successful heartbeat.
+/// The delay between batches uses <see cref="WorkerContext.Time"/>.
+/// <see cref="WorkerKit.Abstractions.Workers.IWorkerIterationObserver"/> records the iteration when the host registered one.
+/// <see cref="NoOpWorkerIterationObserver"/> does nothing.
+/// Register the hosted service with <see cref="WorkerKit.Hosting.DependencyInjection.QueueServiceCollectionExtensions.AddQueueWorker{TWorker,TPayload,THandler}(IServiceCollection, IConfiguration, string)"/>.
+/// </remarks>
+/// <example>
+/// <code>
+/// public sealed class BillingWorker : QueueWorker&lt;Invoice&gt;
+/// {
+///     public BillingWorker(
+///         WorkerContext context,
+///         IWorkQueue&lt;Invoice&gt; queue,
+///         IOptionsMonitor&lt;QueueWorkerOptions&gt; options)
+///         : base(context, queue, options)
+///     {
+///     }
+///
+///     protected override string WorkerName => "billing";
+/// }
+///
+/// services.AddQueueWorker&lt;BillingWorker, Invoice, InvoiceHandler&gt;(configuration, "billing");
+/// </code>
+/// </example>
 public abstract class QueueWorker<T> : PeriodicWorker, IQueueBatches
 {
     private readonly IServiceScopeFactory _scopes;
@@ -17,6 +45,11 @@ public abstract class QueueWorker<T> : PeriodicWorker, IQueueBatches
     private readonly WorkerTelemetry? _telemetry;
     private TimeSpan? _idle;
 
+    /// <summary>Stores the queue and the named options monitor, then passes <paramref name="context"/> to <see cref="PeriodicWorker"/>.</summary>
+    /// <param name="context">Scopes, heartbeat, observer, logger factory, telemetry, and clock.</param>
+    /// <param name="queue">Queue this worker claims.</param>
+    /// <param name="options">Named <see cref="QueueWorkerOptions"/>. The name read later is <see cref="PeriodicWorker.WorkerName"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="context"/>, <paramref name="queue"/>, or <paramref name="options"/> is null.</exception>
     protected QueueWorker(
         WorkerContext context,
         IWorkQueue<T> queue,
@@ -31,6 +64,7 @@ public abstract class QueueWorker<T> : PeriodicWorker, IQueueBatches
         _telemetry = context.Telemetry;
     }
 
+    /// <summary>Named <see cref="QueueWorkerOptions"/> monitor passed to the constructor.</summary>
     protected IOptionsMonitor<QueueWorkerOptions> Options { get; }
 
     /// <summary>
@@ -48,8 +82,21 @@ public abstract class QueueWorker<T> : PeriodicWorker, IQueueBatches
     }
 
     /// <summary><see cref="QueueWorkerOptions.Enabled"/> for this worker. The hosted loop stops when it is false.</summary>
+    /// <remarks>
+    /// The options property defaults to <see langword="false"/>.
+    /// A false value logs once and does not register a heartbeat.
+    /// <see cref="RunBatchAsync"/> and <see cref="PeriodicWorker.RunIterationAsync"/> ignore it.
+    /// </remarks>
     protected override bool IsEnabled => Options.Get(WorkerName).Enabled;
 
+    /// <summary>
+    /// When <see cref="IsEnabled"/> is false, logs that this queue worker is disabled and returns.
+    /// Otherwise logs that it started, runs <see cref="PeriodicWorker.ExecuteAsync"/>, and logs that it stopped when the loop ends.
+    /// </summary>
+    /// <param name="stoppingToken">Passed to <see cref="PeriodicWorker.ExecuteAsync"/>.</param>
+    /// <returns>A task that completes when the worker is disabled or the periodic loop stops.</returns>
+    /// <exception cref="InvalidOperationException">The idle interval is zero or negative when the heartbeat is first registered.</exception>
+    /// <remarks>The disabled path does not register a heartbeat. The start and stop lines are not written by <see cref="PeriodicWorker"/>.</remarks>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         if (!IsEnabled)
@@ -69,6 +116,8 @@ public abstract class QueueWorker<T> : PeriodicWorker, IQueueBatches
         }
     }
 
+    /// <summary>Logs <c>Queue worker {Worker} is disabled</c>.</summary>
+    /// <remarks><see cref="PeriodicWorker.LogDisabled"/> logs a different message. This override is the one the hosted loop calls.</remarks>
     protected override void LogDisabled()
     {
         Logger.LogInformation("Queue worker {Worker} is disabled", WorkerName);
@@ -78,9 +127,39 @@ public abstract class QueueWorker<T> : PeriodicWorker, IQueueBatches
     /// One claim batch. Ignores <see cref="PeriodicWorker.IsEnabled"/>, does not sleep, and runs
     /// <see cref="PeriodicWorker.OnStartingAsync"/> only the first time for this instance.
     /// </summary>
+    /// <param name="cancellationToken">Passed to <see cref="PeriodicWorker.RunIterationAsync"/>.</param>
+    /// <returns>The iteration result for this claim. An empty queue is <see cref="WorkerIterationStatus.Succeeded"/> with a count of zero.</returns>
     public Task<WorkerIterationResult> RunBatchAsync(CancellationToken cancellationToken = default) =>
         RunIterationAsync(cancellationToken);
 
+    /// <summary>
+    /// Claims up to <see cref="QueueWorkerOptions.BatchSize"/> items for <see cref="QueueWorkerOptions.LeaseDuration"/>
+    /// and runs <see cref="IWorkItemHandler{T}"/> for each, at most <see cref="QueueWorkerOptions.MaxConcurrency"/> at a time.
+    /// An empty claim returns zero, which <see cref="PeriodicWorker"/> records as a successful heartbeat.
+    /// Handled items also return zero so <c>worker.items.processed</c> is not counted again without an outcome.
+    /// </summary>
+    /// <param name="services">Ignored. Each item opens its own scope and resolves <see cref="IWorkItemHandler{T}"/> from that scope.</param>
+    /// <param name="cancellationToken">
+    /// Stops starting further items. Items not started, and a handler cancelled with this token, are released with no delay.
+    /// </param>
+    /// <returns>Zero after a claim that was acknowledged. Processed items are not included in this count.</returns>
+    /// <remarks>
+    /// <para>
+    /// <see cref="PermanentWorkItemException"/>, or an attempt greater than or equal to <see cref="QueueWorkerOptions.MaxAttempts"/>, quarantines the item with <see cref="IWorkQueue{T}.FailAsync(WorkItem{T}, string, CancellationToken)"/>.
+    /// Any other handler exception releases the item after <see cref="QueueWorkerOptions.RetryDelay"/> multiplied by the attempt.
+    /// A non-positive retry delay waits zero. An overflow keeps <see cref="QueueWorkerOptions.RetryDelay"/> unchanged.
+    /// </para>
+    /// <para>
+    /// An empty batch raises the next <see cref="Interval"/> by doubling from <see cref="QueueWorkerOptions.MinIdleDelay"/> up to <see cref="QueueWorkerOptions.MaxIdleDelay"/>.
+    /// A batch that contains work sets the next interval to <see cref="QueueWorkerOptions.MinIdleDelay"/>.
+    /// Heartbeat registration still sees <see cref="QueueWorkerOptions.MaxIdleDelay"/>, because <see cref="Interval"/> is read before this method updates the backoff.
+    /// </para>
+    /// <para>
+    /// When <see cref="System.Diagnostics.Activity.Current"/> has a context, the item span is its child.
+    /// <see cref="WorkerContext.Telemetry"/> records <c>done</c>, <c>retry</c>, or <c>failed</c> when it is set. A null telemetry object skips those counts. Cancellation releases the item and does not record one.
+    /// An exception from complete, fail, or release is thrown after leftover items are released, so the iteration fails.
+    /// </para>
+    /// </remarks>
     protected override async Task<int> RunOnceAsync(IServiceProvider services, CancellationToken cancellationToken)
     {
         _ = services;

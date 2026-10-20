@@ -2,8 +2,25 @@
 using WorkerKit.Abstractions.Options;
 namespace WorkerKit.Hosting.Validation;
 
+/// <summary>
+/// Checks lease, retry, and idle limits for <see cref="QueueWorkerOptions"/> against <paramref name="health"/>.
+/// </summary>
+/// <param name="health">Health options used to bound <see cref="QueueWorkerOptions.MaxIdleDelay"/>.</param>
 public sealed class QueueWorkerOptionsValidator(IOptionsMonitor<HealthOptions> health) : IValidateOptions<QueueWorkerOptions>
 {
+    /// <summary>
+    /// Requires a positive lease of at most one day, a retry delay from zero through one hour,
+    /// a positive minimum idle delay, and a maximum idle delay at least that large.
+    /// When health options can be read, the maximum idle delay must not exceed the grace period for the minimum idle delay.
+    /// </summary>
+    /// <param name="name">Named-options name. An empty name uses <see cref="QueueWorkerOptions.SectionName"/> in failure text.</param>
+    /// <param name="options">Options to check.</param>
+    /// <returns>Success, or the collected failures.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="options"/> is null.</exception>
+    /// <remarks>
+    /// The grace check calls <see cref="HealthOptions.HeartbeatGraceFor"/>. It is skipped when reading
+    /// <see cref="IOptionsMonitor{TOptions}.CurrentValue"/> throws <see cref="OptionsValidationException"/>.
+    /// </remarks>
     public ValidateOptionsResult Validate(string? name, QueueWorkerOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);

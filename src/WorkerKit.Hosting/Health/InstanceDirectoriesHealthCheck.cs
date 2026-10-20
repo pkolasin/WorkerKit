@@ -11,11 +11,20 @@ public sealed class InstanceDirectoriesHealthCheck : IHealthCheck
 {
     private readonly IInstanceContext _instance;
 
+    /// <summary>Stores the instance whose data and temp directories are probed.</summary>
+    /// <param name="instance">Supplies <see cref="IInstanceContext.DataDirectory"/> and <see cref="IInstanceContext.TempDirectory"/>.</param>
     public InstanceDirectoriesHealthCheck(IInstanceContext instance)
     {
         _instance = instance;
     }
 
+    /// <summary>
+    /// Writes a temporary file in the data directory and the temp directory, then deletes it.
+    /// A missing directory or a failed write is Unhealthy. Both paths are included in the result data.
+    /// </summary>
+    /// <param name="context">Health check context. This check does not read it.</param>
+    /// <param name="cancellationToken">Unused. The probe is synchronous.</param>
+    /// <returns>Healthy when both directories accept a write; otherwise Unhealthy.</returns>
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         var failures = new List<string>();

@@ -12,6 +12,7 @@ namespace WorkerKit.Abstractions.Queues;
 /// Optional ordering key, for example a customer id. A queue must not hand two live items with the same key to workers at once.
 /// Null means the item may run beside any other item.
 /// </param>
+/// <typeparam name="T">Type of <see cref="Payload"/>.</typeparam>
 public sealed record WorkItem<T>(
     string Id,
     T Payload,

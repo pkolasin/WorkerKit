@@ -8,8 +8,15 @@ namespace WorkerKit.Hosting.Cli.Help;
 /// </summary>
 public static class HostConfigurationNotes
 {
+    /// <summary>Section title written after the command tree. The value is <c>Host configuration overrides</c>.</summary>
     public const string Heading = "Host configuration overrides";
 
+    /// <summary>
+    /// Returns the host-override notes for <paramref name="identity"/>, including instance variables and the telemetry opt-in.
+    /// </summary>
+    /// <param name="identity">Identity whose name and instance variable names are inserted into the notes.</param>
+    /// <returns>The notes text.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="identity"/> is null.</exception>
     public static string For(WorkerAppIdentity identity)
     {
         ArgumentNullException.ThrowIfNull(identity);

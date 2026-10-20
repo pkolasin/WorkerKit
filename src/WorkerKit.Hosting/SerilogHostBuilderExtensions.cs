@@ -8,6 +8,7 @@ using WorkerKit.Abstractions.Instances;
 using WorkerKit.Abstractions.Options;
 namespace WorkerKit.Hosting;
 
+/// <summary>Adds the worker Serilog pipeline to a host builder.</summary>
 public static class SerilogHostBuilderExtensions
 {
     /// <summary>
@@ -17,6 +18,18 @@ public static class SerilogHostBuilderExtensions
     /// When <paramref name="enableTelemetry"/> is set and <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> is configured,
     /// the same logger also exports OTLP with the trace and metric resource attributes.
     /// </summary>
+    /// <param name="builder">Host builder whose logging is configured.</param>
+    /// <param name="instance">Instance used to resolve a relative log path and to name the log events.</param>
+    /// <param name="enableTelemetry">When true, OTLP log export is added if export settings are present.</param>
+    /// <param name="application">Application identity for OTLP resource attributes. When null, the host application name is used.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="instance"/> is null.</exception>
+    /// <exception cref="InvalidOperationException">The log directory cannot be created.</exception>
+    /// <remarks>
+    /// A missing <c>LogFile:Path</c> falls back to <c>logs/worker-.json</c>, <c>LogFile:RetainedFileCount</c> to 14,
+    /// and <c>LogFile:FlushIntervalSeconds</c> to 1. The file sink flushes at least once per second.
+    /// OTLP export is skipped when <paramref name="enableTelemetry"/> is false or
+    /// <see cref="OtlpLogExportSettings.FromConfiguration"/> returns null.
+    /// </remarks>
     public static void AddWorkerSerilog(
         this IHostApplicationBuilder builder,
         IInstanceContext instance,

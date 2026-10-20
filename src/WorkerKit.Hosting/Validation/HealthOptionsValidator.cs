@@ -2,8 +2,16 @@
 using WorkerKit.Abstractions.Options;
 namespace WorkerKit.Hosting.Validation;
 
+/// <summary>Checks <see cref="HealthOptions.ListenUrl"/> and <see cref="HealthOptions.HeartbeatGracePadding"/>.</summary>
 public sealed class HealthOptionsValidator : IValidateOptions<HealthOptions>
 {
+    /// <summary>
+    /// An empty listen URL succeeds. A URL must be an absolute <c>http://</c> prefix that ends with <c>/</c> and uses a loopback host.
+    /// When a URL is set, <see cref="HealthOptions.HeartbeatGracePadding"/> must be zero or positive.
+    /// </summary>
+    /// <param name="name">Named-options name. This validator does not use it.</param>
+    /// <param name="options">Options to check.</param>
+    /// <returns>Success, or a failure that names the health setting that failed.</returns>
     public ValidateOptionsResult Validate(string? name, HealthOptions options)
     {
         if (string.IsNullOrWhiteSpace(options.ListenUrl))

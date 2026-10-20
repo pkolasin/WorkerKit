@@ -8,6 +8,30 @@ namespace WorkerKit.Hosting.Workers;
 /// A failed iteration is logged and retried. Cancellation stops the loop without failing the host.
 /// <see cref="IWorkerIterationObserver"/> records the iteration span and metrics when <c>run</c> enables OpenTelemetry.
 /// </summary>
+/// <remarks>
+/// The hosted loop waits on <see cref="WorkerContext.Time"/> between iterations.
+/// <see cref="NoOpWorkerIterationObserver"/> records nothing when the host has not replaced it.
+/// </remarks>
+/// <example>
+/// <code>
+/// public sealed class ForecastWorker : PeriodicWorker
+/// {
+///     public ForecastWorker(WorkerContext context)
+///         : base(context)
+///     {
+///     }
+///
+///     protected override string WorkerName => "open-meteo";
+///
+///     protected override TimeSpan Interval => TimeSpan.FromMinutes(15);
+///
+///     protected override Task&lt;int&gt; RunOnceAsync(IServiceProvider services, CancellationToken cancellationToken)
+///     {
+///         return Task.FromResult(0);
+///     }
+/// }
+/// </code>
+/// </example>
 public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
 {
     private readonly IServiceScopeFactory _scopes;
@@ -16,6 +40,9 @@ public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
     private int _registered;
     private int _started;
 
+    /// <summary>Stores <paramref name="context"/> and creates <see cref="Logger"/> for the concrete worker type.</summary>
+    /// <param name="context">Scopes, heartbeat, observer, logger factory, telemetry, and clock.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="context"/> is null.</exception>
     protected PeriodicWorker(WorkerContext context)
     {
         ArgumentNullException.ThrowIfNull(context);
@@ -26,8 +53,10 @@ public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
         Logger = context.CreateLogger(GetType());
     }
 
+    /// <summary><see cref="WorkerContext"/> passed to the constructor. The hosted loop delays on <see cref="WorkerContext.Time"/>.</summary>
     protected WorkerContext Context { get; }
 
+    /// <summary>Logger whose category is the concrete worker type.</summary>
     protected ILogger Logger { get; }
 
     /// <summary>Stable name used in health output, for example <c>open-meteo</c>.</summary>
@@ -41,6 +70,10 @@ public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
     /// so health stays as it is for the other workers. The default is true.
     /// <see cref="RunIterationAsync"/> ignores this switch.
     /// </summary>
+    /// <remarks>
+    /// The default value is <see langword="true"/>. A false value logs once through <see cref="LogDisabled"/> and skips
+    /// <see cref="OnStartingAsync"/>. <see cref="RunIterationAsync"/> still runs the worker.
+    /// </remarks>
     protected virtual bool IsEnabled => true;
 
     /// <summary>Called once when <see cref="IsEnabled"/> is false. The hosted loop does not call it again.</summary>
@@ -54,12 +87,18 @@ public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
     /// <see cref="RunIterationAsync"/>. A later call does not run it again.
     /// The hosted loop skips it when <see cref="IsEnabled"/> is false.
     /// </summary>
+    /// <param name="cancellationToken">Token from the hosted loop or from <see cref="RunIterationAsync"/>.</param>
+    /// <returns>A completed task. A subclass can return its own startup work.</returns>
+    /// <remarks>An exception propagates and clears the started flag, so the next iteration tries again. The heartbeat is not registered until this task completes.</remarks>
     protected virtual Task OnStartingAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
     /// <summary>
     /// One unit of work. Return the number of items processed. An empty result is still a success.
     /// Throw to record a failed iteration. Use <paramref name="services"/> for scoped services.
     /// </summary>
+    /// <param name="services">Scope created for this iteration and disposed when it finishes.</param>
+    /// <param name="cancellationToken">Cancels this iteration. Cancellation is reported as <see cref="WorkerIterationStatus.Abandoned"/>.</param>
+    /// <returns>The number of items processed. Zero is still a successful heartbeat.</returns>
     protected abstract Task<int> RunOnceAsync(IServiceProvider services, CancellationToken cancellationToken);
 
     /// <summary>
@@ -71,6 +110,15 @@ public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
     /// A non-positive <see cref="Interval"/> on the first call throws
     /// <see cref="InvalidOperationException"/> with the same message as the hosted loop.
     /// </summary>
+    /// <param name="cancellationToken">Cancels <see cref="RunOnceAsync"/>. The heartbeat is not updated and the result is <see cref="WorkerIterationStatus.Abandoned"/>.</param>
+    /// <returns>
+    /// Succeeded with the count from <see cref="RunOnceAsync"/>, Failed with that exception, or Abandoned when <paramref name="cancellationToken"/> cancels the work.
+    /// </returns>
+    /// <exception cref="InvalidOperationException"><see cref="Interval"/> is zero or negative the first time this instance registers its heartbeat.</exception>
+    /// <remarks>
+    /// <see cref="IWorkerIterationObserver"/> is called around the work. <see cref="NoOpWorkerIterationObserver"/> records nothing.
+    /// An exception from <see cref="OnStartingAsync"/> propagates, and a later call runs startup again.
+    /// </remarks>
     public async Task<WorkerIterationResult> RunIterationAsync(CancellationToken cancellationToken = default)
     {
         await EnsureStartedAsync(cancellationToken).ConfigureAwait(false);
@@ -99,6 +147,17 @@ public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
         }
     }
 
+    /// <summary>
+    /// When <see cref="IsEnabled"/> is false, calls <see cref="LogDisabled"/> once and returns without registering a heartbeat.
+    /// Otherwise repeats <see cref="RunIterationAsync"/> until <paramref name="stoppingToken"/> is cancelled.
+    /// </summary>
+    /// <param name="stoppingToken">Stops the loop. Cancellation during an iteration abandons that iteration and ends the loop. Cancellation during the delay ends the loop.</param>
+    /// <returns>A task that completes when the worker is disabled or the host stops it.</returns>
+    /// <exception cref="InvalidOperationException"><see cref="Interval"/> is zero or negative when the heartbeat is first registered.</exception>
+    /// <remarks>
+    /// After an iteration that was not abandoned, the loop waits for <see cref="Interval"/> on <see cref="WorkerContext.Time"/>.
+    /// A non-positive interval at that later read waits one second instead.
+    /// </remarks>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         if (!IsEnabled)

@@ -32,6 +32,11 @@ public sealed class WorkerCommands
         _plan = new WorkerHostPlan(args, identity);
     }
 
+    /// <summary>Creates an empty catalog. Built-in commands are added when the tree is built.</summary>
+    /// <param name="args">Arguments stored for the host when a command builds one.</param>
+    /// <param name="identity">Application identity. When null, commands that need an identity use <see cref="AppIdentity.Current"/>.</param>
+    /// <returns>The catalog.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="args"/> is null.</exception>
     public static WorkerCommands Create(string[] args, WorkerAppIdentity? identity = null)
     {
         ArgumentNullException.ThrowIfNull(args);
@@ -53,6 +58,13 @@ public sealed class WorkerCommands
 
     internal void UseOperatingSystemIntegration(bool enabled) => _plan.OperatingSystemIntegration = enabled;
 
+    /// <summary>Adds <typeparamref name="TCommand"/> at the root.</summary>
+    /// <typeparam name="TCommand">Command type. Its <see cref="IWorkerCommand.Spec"/> supplies the name and symbols.</typeparam>
+    /// <returns>This catalog.</returns>
+    /// <remarks>
+    /// The command name and its aliases cannot be <c>run</c>, <c>check-config</c>, <c>version</c>, or <c>help</c>.
+    /// Telemetry for the command is on when <see cref="IWorkerCommand.EnableTelemetry"/> is true or the caller passes <c>--telemetry</c>.
+    /// </remarks>
     public WorkerCommands Add<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TCommand>()
         where TCommand : class, IWorkerCommand
     {
@@ -63,6 +75,13 @@ public sealed class WorkerCommands
         return this;
     }
 
+    /// <summary>Adds a root group and runs <paramref name="configure"/> before the group is attached.</summary>
+    /// <param name="name">Group name.</param>
+    /// <param name="description">Group description.</param>
+    /// <param name="configure">Callback that adds commands to the new group.</param>
+    /// <returns>This catalog.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="configure"/> is null.</exception>
+    /// <remarks>The group name cannot be <c>run</c>, <c>check-config</c>, <c>version</c>, or <c>help</c>.</remarks>
     public WorkerCommands AddGroup(string name, string description, Action<WorkerCommandGroup> configure)
     {
         ArgumentNullException.ThrowIfNull(configure);
@@ -74,6 +93,15 @@ public sealed class WorkerCommands
         return this;
     }
 
+    /// <summary>
+    /// Builds the root command, including <c>run</c>, <c>check-config</c>, <c>version</c>, <c>help</c>, and the commands added so far.
+    /// A second call returns the same command.
+    /// </summary>
+    /// <returns>The root command. With no command, it runs the host.</returns>
+    /// <remarks>
+    /// <c>--instance-dir</c>, <c>--instance</c>, and <c>--telemetry</c> are recursive on the root.
+    /// <c>run</c> records telemetry on every invocation. <c>check-config</c>, <c>help</c>, and <c>version</c> ignore <c>--telemetry</c>.
+    /// </remarks>
     public RootCommand Build()
     {
         if (_root is not null)
@@ -110,6 +138,10 @@ public sealed class WorkerCommands
         return root;
     }
 
+    /// <summary>Builds the tree and parses <paramref name="args"/>.</summary>
+    /// <param name="args">Arguments to parse.</param>
+    /// <returns>The parse result.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="args"/> is null.</exception>
     public ParseResult Parse(string[] args)
     {
         ArgumentNullException.ThrowIfNull(args);
