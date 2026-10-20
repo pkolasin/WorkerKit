@@ -224,6 +224,7 @@
             "Directory.Packages.props",
             "Contoso.Billing.sln",
             "README.md",
+            "AGENTS.md",
             "global.json",
             "nuget.config",
             ".editorconfig",
