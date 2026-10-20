@@ -1,0 +1,45 @@
+# WorkerKit
+
+> Generic host for data connectors and processing workers. One program runs as a console app, in Docker, as a Windows Service, and as a systemd service. Packages are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Testing, and WorkerKit.Templates. ExampleHost and the samples are not packages.
+
+The libraries multi-target `net8.0` and `net10.0`. A project that targets `net9.0` uses the `net8.0` assets. There is no `net9.0` target. The template (`dotnet new workerkit-connector`) offers `net10.0` (default) and `net8.0`.
+
+A connector calls `WorkerApp.CreateBuilder<TProgram>`, registers `IWorkerCommand` implementations on `Commands`, and passes its composition root through `ConfigureHost`. `PeriodicWorker` is the hosted loop. `QueueWorker<T>` claims `IWorkQueue<T>` batches. Commands declare a static `CommandSpec` and `CommandOption<T>` values. Hosting reads that spec without constructing the command and without reflecting over properties. Root command names `run`, `check-config`, `version`, and `help` are reserved.
+
+One install can run several processes. The instance directory holds that process's configuration, logs, and data. `dotnet publish` of a host that references WorkerKit.Hosting writes `deploy/` and `workerkit.app.json`. The service scripts read every name from that file. `-p:WorkerKitDeployScripts=false` skips the copy.
+
+`run` always records traces and metrics. A connector command records them when its static `EnableTelemetry` is true or the invocation passes `--telemetry`. Export stays off unless `OTEL_EXPORTER_OTLP_ENDPOINT` is set. `help` and `version` do not build a host.
+
+`WorkerKit.Testing` builds the same host in process. `RunIterationAsync` runs one periodic pass and does not sleep. `RunCommandAsync` invokes the command tree. `CliReference.AssertUpToDate` compares `help --markdown` with `doc/cli.md`.
+
+XML documentation for the four library assemblies ships in each nupkg. The compiler XML files are the API reference. The pages below are the narrative reference.
+
+## Start
+
+- [README](https://github.com/pkolasin/WorkerKit/blob/main/README.md): host, configuration, instances, workers, commands, health, and OpenTelemetry
+- [AGENTS.md](https://github.com/pkolasin/WorkerKit/blob/main/AGENTS.md): rules for changing this repository
+- [CLI reference](https://github.com/pkolasin/WorkerKit/blob/main/doc/cli.md): example host `help --markdown` output
+- [Deploy](https://github.com/pkolasin/WorkerKit/blob/main/doc/deploy.md): publish, `workerkit.app.json`, Windows Service, and systemd
+- [Contributing](https://github.com/pkolasin/WorkerKit/blob/main/CONTRIBUTING.md): build and test command
+- [Security](https://github.com/pkolasin/WorkerKit/blob/main/SECURITY.md): how to report a vulnerability
+
+## Packages
+
+- [WorkerKit.Abstractions](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Abstractions/README.md): queues, identity, options, and reflection-free command contracts
+- [WorkerKit.Hosting](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Hosting/README.md): host, CLI, workers, health, Serilog, and OpenTelemetry
+- [WorkerKit.Soap](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Soap/README.md): WCF binding and channel abort helpers, no generated client
+- [WorkerKit.Testing](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Testing/README.md): `WorkerAppTester`, one-iteration workers, and `CliReference`
+- [WorkerKit.Templates](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Templates/README.md): `dotnet new workerkit-connector` parameters
+
+## Template
+
+- [Connector README](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Templates/content/workerkit-connector/README.md): what a generated connector contains
+- [Connector AGENTS.md](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Templates/content/workerkit-connector/AGENTS.md): instructions copied into every generated connector
+- [Connector skill](https://github.com/pkolasin/WorkerKit/blob/main/skills/workerkit-connector/SKILL.md): short skill for creating a connector from the packages
+
+## Samples
+
+- [Example host](https://github.com/pkolasin/WorkerKit/tree/main/src/ExampleHost): composition root used by the repository CLI reference
+- [VIES](https://github.com/pkolasin/WorkerKit/tree/main/samples/Vies): SOAP VAT check, `check-vat`, and `vies-queue`
+- [Open-Meteo](https://github.com/pkolasin/WorkerKit/tree/main/samples/OpenMeteo): REST client and the `open-meteo` periodic worker
+- [Outbound](https://github.com/pkolasin/WorkerKit/tree/main/samples/Outbound): MQTT and SMS behind `outbound-queue`
