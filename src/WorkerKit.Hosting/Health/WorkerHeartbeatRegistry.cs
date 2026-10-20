@@ -3,6 +3,10 @@ using WorkerKit.Abstractions.Options;
 using WorkerKit.Abstractions.Workers;
 namespace WorkerKit.Hosting.Health;
 
+/// <summary>
+/// In-memory <see cref="IWorkerHeartbeat"/>. Timestamps come from <see cref="TimeProvider.GetUtcNow"/>.
+/// Registering a name that already exists clears its success, failure count, and last error.
+/// </summary>
 public sealed class WorkerHeartbeatRegistry : IWorkerHeartbeat
 {
     private readonly IOptionsMonitor<HealthOptions> _options;
@@ -10,12 +14,24 @@ public sealed class WorkerHeartbeatRegistry : IWorkerHeartbeat
     private readonly object _gate = new();
     private readonly Dictionary<string, Registration> _workers = new(StringComparer.Ordinal);
 
+    /// <summary>Stores the health options used for grace and the clock used for timestamps.</summary>
+    /// <param name="options">Supplies <see cref="HealthOptions.HeartbeatGraceFor"/> when <see cref="Snapshot"/> is taken.</param>
+    /// <param name="time">Clock for registration and success times. A failure does not store this clock.</param>
     public WorkerHeartbeatRegistry(IOptionsMonitor<HealthOptions> options, TimeProvider time)
     {
         _options = options;
         _time = time;
     }
 
+    /// <summary>
+    /// Starts tracking <paramref name="workerName"/> at the current clock time.
+    /// A second call for the same name resets that worker and replaces its interval.
+    /// </summary>
+    /// <param name="workerName">Worker name. Compared ordinally.</param>
+    /// <param name="interval">Positive interval stored for <see cref="HealthOptions.HeartbeatGraceFor"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="workerName"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="workerName"/> is empty or white space.</exception>
+    /// <exception cref="ArgumentOutOfRangeException"><paramref name="interval"/> is zero or negative.</exception>
     public void Register(string workerName, TimeSpan interval)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(workerName);
@@ -37,11 +53,27 @@ public sealed class WorkerHeartbeatRegistry : IWorkerHeartbeat
         }
     }
 
+    /// <summary>
+    /// Records a success at the current clock time and clears the consecutive failure count and last error.
+    /// </summary>
+    /// <param name="workerName">Name passed to <see cref="Register"/>.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="workerName"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="workerName"/> is empty or white space.</exception>
+    /// <exception cref="InvalidOperationException"><paramref name="workerName"/> is not registered.</exception>
     public void Success(string workerName)
     {
         Update(workerName, static (registration, now) => registration.Success(now));
     }
 
+    /// <summary>
+    /// Increments the consecutive failure count and stores <paramref name="exception"/>'s message.
+    /// An empty message stores the exception type name. The last success time is left unchanged.
+    /// </summary>
+    /// <param name="workerName">Name passed to <see cref="Register"/>.</param>
+    /// <param name="exception">Failure to record. The snapshot keeps the message, not the exception object.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="exception"/> or <paramref name="workerName"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="workerName"/> is empty or white space.</exception>
+    /// <exception cref="InvalidOperationException"><paramref name="workerName"/> is not registered.</exception>
     public void Failure(string workerName, Exception exception)
     {
         ArgumentNullException.ThrowIfNull(exception);
@@ -49,6 +81,10 @@ public sealed class WorkerHeartbeatRegistry : IWorkerHeartbeat
         Update(workerName, (registration, now) => registration.Failure(now, error));
     }
 
+    /// <summary>
+    /// Copies each registration. Grace is <see cref="HealthOptions.HeartbeatGraceFor"/> of that worker's interval.
+    /// </summary>
+    /// <returns>One snapshot per registered worker. The list is empty when nothing has been registered.</returns>
     public IReadOnlyList<WorkerHeartbeatSnapshot> Snapshot()
     {
         var options = _options.CurrentValue;

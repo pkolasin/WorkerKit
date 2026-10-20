@@ -5,6 +5,7 @@ using WorkerKit.Hosting.Validation;
 using WorkerKit.Abstractions.Options;
 namespace WorkerKit.Hosting.Http;
 
+/// <summary>Registers typed HTTP clients that use the standard resilience handler.</summary>
 public static class HttpClientRegistration
 {
     /// <summary>
@@ -13,6 +14,13 @@ public static class HttpClientRegistration
     /// Typed clients are transient: resolve them from a scope, not from a singleton.
     /// <see cref="HttpClient.Timeout"/> is infinite because the resilience handler owns the timeouts.
     /// </summary>
+    /// <typeparam name="TClient">Client type resolved by callers.</typeparam>
+    /// <typeparam name="TImplementation">Implementation registered for <typeparamref name="TClient"/>.</typeparam>
+    /// <typeparam name="TOptions">Endpoint options bound from <paramref name="section"/>.</typeparam>
+    /// <param name="services">Service collection to update.</param>
+    /// <param name="section">Configuration section bound to <typeparamref name="TOptions"/>.</param>
+    /// <returns>The HTTP client builder for <typeparamref name="TClient"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> or <paramref name="section"/> is null.</exception>
     public static IHttpClientBuilder AddResilientJsonClient<TClient, TImplementation, TOptions>(
         this IServiceCollection services,
         IConfiguration section)
