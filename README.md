@@ -1,6 +1,6 @@
 # WorkerKit
 
-Repository: https://github.com/pkolasin/WorkerKit
+Repository: https://github.com/pkolasin/WorkerKit. Agent index: [llms.txt](llms.txt). Contributor rules: [AGENTS.md](AGENTS.md).
 
 Generic host for data connectors and processing workers. One program runs as a console app, in Docker, as a Windows Service, and as a systemd service (`Type=notify`). It includes DI, layered configuration, structured file logging (Serilog), `IHttpClientFactory` with resilience (retry, timeout, circuit breaker), and CLI commands over the same container. The samples under `samples/` are not part of the packages: an EU VIES SOAP VAT check, an Open-Meteo REST worker, a VIES queue worker, and an outbound MQTT and SMS queue. Copy the host with `dotnet new`, then replace those samples.
 
