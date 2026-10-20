@@ -115,6 +115,7 @@ public sealed class ConnectorTemplateTests : IClassFixture<TemplateFeedFixture>
         Assert.Contains("sdk:10.0", File.ReadAllText(Path.Combine(output, "Dockerfile")), StringComparison.Ordinal);
         Assert.Contains("CONTOSOBILLING_INSTANCE_DIR", File.ReadAllText(Path.Combine(output, "Dockerfile")), StringComparison.Ordinal);
         Assert.Contains(">net10.0<", File.ReadAllText(Path.Combine(output, "Directory.Build.props")), StringComparison.Ordinal);
+        AssertAgentsGuide(output, "Contoso.Billing", "CONTOSOBILLING", "net10.0");
         Assert.Contains("0.1.1-dev", File.ReadAllText(Path.Combine(output, "Directory.Packages.props")), StringComparison.Ordinal);
         Assert.DoesNotContain("//#if", File.ReadAllText(Path.Combine(output, "src", "Contoso.Billing.Host", "appsettings.json")), StringComparison.Ordinal);
         using (var settings = JsonDocument.Parse(File.ReadAllText(Path.Combine(output, "src", "Contoso.Billing.Host", "appsettings.json"))))
@@ -163,6 +164,7 @@ public sealed class ConnectorTemplateTests : IClassFixture<TemplateFeedFixture>
         Assert.Contains("AddNorthwindShippingConnector", program, StringComparison.Ordinal);
         Assert.Contains("NORTHWIND", program, StringComparison.Ordinal);
         Assert.Contains(">net8.0<", File.ReadAllText(Path.Combine(output, "Directory.Build.props")), StringComparison.Ordinal);
+        AssertAgentsGuide(output, "Northwind.Shipping", "NORTHWIND", "net8.0");
         Assert.Contains("sdk:8.0", File.ReadAllText(Path.Combine(output, "Dockerfile")), StringComparison.Ordinal);
         Assert.Contains("NORTHWIND_INSTANCE_DIR", File.ReadAllText(Path.Combine(output, "Dockerfile")), StringComparison.Ordinal);
         using (var settings = JsonDocument.Parse(File.ReadAllText(Path.Combine(output, "src", "Northwind.Shipping.Host", "appsettings.json"))))
@@ -248,6 +250,27 @@ public sealed class ConnectorTemplateTests : IClassFixture<TemplateFeedFixture>
 
     private static void AssertCommand((int ExitCode, string Output) result) =>
         Assert.True(result.ExitCode == 0, result.Output);
+
+    private static void AssertAgentsGuide(string output, string name, string prefix, string framework)
+    {
+        var agents = File.ReadAllText(Path.Combine(output, "AGENTS.md"));
+        var compact = name.Replace(".", "", StringComparison.Ordinal);
+        Assert.Contains("# " + name, agents, StringComparison.Ordinal);
+        Assert.Contains("Add" + compact + "Connector", agents, StringComparison.Ordinal);
+        Assert.Contains(prefix + "_INSTANCE_DIR", agents, StringComparison.Ordinal);
+        Assert.Contains(framework, agents, StringComparison.Ordinal);
+        Assert.Contains("CliReference.AssertUpToDate", agents, StringComparison.Ordinal);
+        Assert.Contains("RunIterationAsync", agents, StringComparison.Ordinal);
+        Assert.Contains("doc/cli.md", agents, StringComparison.Ordinal);
+        Assert.DoesNotContain("__TARGET_FRAMEWORK__", agents, StringComparison.Ordinal);
+        Assert.DoesNotContain("WKVER", agents, StringComparison.Ordinal);
+        if (!string.Equals(name, "Contoso.Billing", StringComparison.Ordinal))
+        {
+            Assert.DoesNotContain("Contoso.Billing", agents, StringComparison.Ordinal);
+            Assert.DoesNotContain("CONTOSOBILLING", agents, StringComparison.Ordinal);
+            Assert.DoesNotContain("contoso-billing", agents, StringComparison.Ordinal);
+        }
+    }
 }
 
 internal sealed class TemplateIsolation
