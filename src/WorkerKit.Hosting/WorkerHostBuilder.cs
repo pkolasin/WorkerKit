@@ -11,8 +11,27 @@ using WorkerKit.Hosting.Telemetry;
 using WorkerKit.Abstractions.Instances;
 namespace WorkerKit.Hosting;
 
+/// <summary>Builds the generic host used by <c>run</c>, <c>check-config</c>, and connector commands.</summary>
 public static class WorkerHostBuilder
 {
+    /// <summary>
+    /// Resolves the instance, loads instance configuration, and registers framework services.
+    /// The content root is the install directory.
+    /// </summary>
+    /// <param name="args">Arguments used for instance resolution and host configuration.</param>
+    /// <param name="contentRoot">Install directory. When null, the directory is <see cref="AppContext.BaseDirectory"/>.</param>
+    /// <param name="environmentName">Host environment. When null or empty, the host builder settings leave it unset.</param>
+    /// <param name="configure">Callback invoked after <paramref name="configureHost"/> and before telemetry.</param>
+    /// <param name="enableTelemetry">When true, registers the worker telemetry pipeline. The parameter default is false.</param>
+    /// <param name="identity">Application identity. When null, <see cref="AppIdentity.Current"/> is used.</param>
+    /// <param name="configureHost">Callback invoked after framework services and before <paramref name="configure"/>.</param>
+    /// <param name="operatingSystemIntegration">When true, registers Windows Service and systemd integration. The parameter default is true.</param>
+    /// <returns>The host builder. The host is not built or started.</returns>
+    /// <remarks>
+    /// <see cref="InstanceLocator.Resolve(string[], Func{string, string?}, string, WorkerAppIdentity)"/> runs before the host exists,
+    /// because that choice decides which configuration files are loaded.
+    /// Telemetry is registered only when <paramref name="enableTelemetry"/> is true, after the configuration callbacks.
+    /// </remarks>
     public static HostApplicationBuilder Create(
         string[] args,
         string? contentRoot = null,

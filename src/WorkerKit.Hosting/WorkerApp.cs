@@ -25,12 +25,33 @@ public sealed class WorkerAppOptions
     public Assembly? ApplicationAssembly { get; set; }
 }
 
+/// <summary>Entry point that records commands and host callbacks, then runs the selected command.</summary>
+/// <example>
+/// <code>
+/// var app = WorkerApp.CreateBuilder&lt;Program&gt;(args, options =>
+/// {
+///     options.Name = "Contoso";
+///     options.EnvPrefix = "CONTOSO";
+/// });
+/// app.Commands.Add&lt;LookupCommand&gt;();
+/// app.ConfigureHost(builder => builder.Services.AddHostedService&lt;MyWorker&gt;());
+/// return await app.RunAsync();
+/// </code>
+/// </example>
 public static class WorkerApp
 {
     /// <summary>
     /// Starts a recipe. The returned builder records commands and <c>ConfigureHost</c> delegates only.
     /// <see cref="WorkerAppBuilder.RunAsync"/> parses <paramref name="args"/> and builds a host for the chosen command.
     /// </summary>
+    /// <typeparam name="TProgram">
+    /// Application type. Its assembly is used unless <see cref="WorkerAppOptions.ApplicationAssembly"/> is set
+    /// or that assembly is a test host, in which case the entry assembly is used when it is not a test host.
+    /// </typeparam>
+    /// <param name="args">Arguments stored for <see cref="WorkerAppBuilder.RunAsync"/>.</param>
+    /// <param name="configure">Optional identity overrides. When null, the identity comes from the application assembly.</param>
+    /// <returns>A builder that has not loaded configuration or created an instance directory.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="args"/> is null.</exception>
     public static WorkerAppBuilder CreateBuilder<TProgram>(string[] args, Action<WorkerAppOptions>? configure = null)
     {
         ArgumentNullException.ThrowIfNull(args);
