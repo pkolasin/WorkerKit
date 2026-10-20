@@ -10,12 +10,26 @@ using WorkerKit.Abstractions.Instances;
 using WorkerKit.Abstractions.Workers;
 namespace WorkerKit.Hosting.Telemetry;
 
+/// <summary>Registers WorkerKit traces, metrics, and the iteration observer on a host builder.</summary>
 public static class WorkerDefaultsExtensions
 {
     /// <summary>
     /// Registers traces, metrics, and the iteration observer for <c>run</c> and for a connector command
     /// that opts in. The OTLP exporter is added only when <c>OTEL_EXPORTER_OTLP_ENDPOINT</c> is set.
     /// </summary>
+    /// <param name="builder">Host builder that receives the OpenTelemetry registrations.</param>
+    /// <param name="instance">Instance id written to <c>service.instance.id</c>.</param>
+    /// <param name="application">
+    /// When set, <see cref="WorkerAppIdentity.Name"/> and <see cref="WorkerAppIdentity.Version"/> identify the service.
+    /// When null, the host application name is the service name and <see cref="TelemetryIdentity.ReadServiceVersion"/> is the service version.
+    /// </param>
+    /// <returns><paramref name="builder"/>, so calls can be chained.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="builder"/> or <paramref name="instance"/> is null.</exception>
+    /// <remarks>
+    /// Replaces <see cref="IWorkerIterationObserver"/> with <see cref="TelemetryWorkerIterationObserver"/>.
+    /// The OTLP exporter is attached to traces and metrics. The logging exporter is not added; logs stay on the Serilog sink.
+    /// Names from <see cref="TelemetrySourceRegistry"/> are subscribed when that registry is already in the service collection.
+    /// </remarks>
     public static IHostApplicationBuilder AddWorkerDefaults(
         this IHostApplicationBuilder builder,
         IInstanceContext instance,
