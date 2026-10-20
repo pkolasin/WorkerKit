@@ -20,4 +20,15 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <WarningsAsErrors>$(WarningsAsErrors);CS1591</WarningsAsErrors>
   </PropertyGroup>
+
+  <!-- Set only by tests that pack or build this repo while another dotnet test is using obj/.
+       Each project gets its own subdirectory so a ProjectReference does not share one intermediate path.
+       The repo obj/ and bin/ stay excluded: they are no longer the intermediate path, so the SDK would otherwise compile them. -->
+  <PropertyGroup Condition="'$(WorkerKitIsolatedIntermediate)' != ''">
+    <BaseIntermediateOutputPath>$(WorkerKitIsolatedIntermediate)$(MSBuildProjectName)/</BaseIntermediateOutputPath>
+    <BaseOutputPath>$(WorkerKitIsolatedIntermediate)$(MSBuildProjectName)/bin/</BaseOutputPath>
+    <DefaultItemExcludes>$(DefaultItemExcludes);$(MSBuildProjectDirectory)/obj/**;$(MSBuildProjectDirectory)/bin/**</DefaultItemExcludes>
+    <RestorePackagesPath Condition="'$(WorkerKitIsolatedPackages)' != ''">$(WorkerKitIsolatedPackages)</RestorePackagesPath>
+    <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+  </PropertyGroup>
 </Project>

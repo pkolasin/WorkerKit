@@ -20,6 +20,8 @@ public sealed class DocumentationPackageTests
         {
             var repo = RepoPaths.RepoFile("WorkerKit.sln");
             repo = Path.GetDirectoryName(repo)!;
+            var intermediate = Path.Combine(root, "int").Replace('\\', '/') + "/";
+            Directory.CreateDirectory(Path.Combine(root, "int"));
             var version = "0.1.1-dev.docxml";
             foreach (var project in new[]
             {
@@ -32,6 +34,7 @@ public sealed class DocumentationPackageTests
                 var packed = Run(
                     repo,
                     packages,
+                    intermediate,
                     ["pack", Path.Combine(repo, project), "-c", "Release", "-o", feed, "-p:Version=" + version, "--nologo", "-warnaserror"]);
                 Assert.True(packed.ExitCode == 0, packed.Output);
             }
@@ -75,7 +78,7 @@ public sealed class DocumentationPackageTests
     }
 #endif
 
-    private static (int ExitCode, string Output) Run(string repo, string packages, IReadOnlyList<string> arguments)
+    private static (int ExitCode, string Output) Run(string repo, string packages, string intermediate, IReadOnlyList<string> arguments)
     {
         var start = new ProcessStartInfo("dotnet", string.Join(" ", arguments.Select(Quote)))
         {
@@ -87,6 +90,11 @@ public sealed class DocumentationPackageTests
         start.Environment["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1";
         start.Environment["DOTNET_NOLOGO"] = "1";
         start.Environment["NUGET_PACKAGES"] = packages;
+        start.Environment["NUGET_HTTP_CACHE_PATH"] = Path.Combine(Path.GetDirectoryName(packages)!, "http-cache");
+        start.Environment["RestorePackagesPath"] = packages;
+        start.Environment["WorkerKitIsolatedPackages"] = packages;
+        start.Environment["WorkerKitIsolatedIntermediate"] = intermediate;
+        start.Environment["DisableImplicitNuGetFallbackFolder"] = "true";
         start.Environment["MSBUILDDISABLENODEREUSE"] = "1";
         start.Environment.Remove("MSBuildSDKsPath");
         start.Environment.Remove("MSBuildExtensionsPath");
