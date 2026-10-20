@@ -32,7 +32,7 @@ Library namespaces match the folder under `WorkerKit.*`. The host root namespace
 ## Prerequisites
 
 - .NET SDK 10 (`global.json` rolls forward within the 10.x feature band)
-- .NET 8 targeting pack, because the WorkerKit packages multi-target `net10.0` and `net8.0`
+- .NET 8 targeting pack, because the WorkerKit packages multi-target `net10.0` and `net8.0`. A project that targets `net9.0` is supported through the `net8.0` assets. There is no separate `net9.0` target.
 - For the container image: Docker and the `mcr.microsoft.com/dotnet/sdk:10.0` / `runtime:10.0` images
 - For the VIES regeneration script only: `dotnet-svcutil` 8.0.0, which runs on the .NET 9 runtime. The build does not need it.
 
