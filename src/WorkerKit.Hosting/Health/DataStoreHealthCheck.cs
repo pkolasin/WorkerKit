@@ -13,12 +13,27 @@ public sealed class DataStoreHealthCheck : IHealthCheck
     private readonly IOptionsMonitor<DataOptions> _data;
     private readonly IDbConnectionFactory? _factory;
 
+    /// <summary>
+    /// Keeps the data options and the single registered <see cref="IDbConnectionFactory"/>.
+    /// </summary>
+    /// <param name="data">Current <c>Data</c> options. <see cref="DataOptions.Provider"/> selects the probe.</param>
+    /// <param name="factories">Registered connection factories. The check uses the only entry.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="factories"/> is null.</exception>
+    /// <exception cref="InvalidOperationException">More than one <see cref="IDbConnectionFactory"/> is registered.</exception>
     public DataStoreHealthCheck(IOptionsMonitor<DataOptions> data, IEnumerable<IDbConnectionFactory> factories)
     {
         _data = data;
         _factory = factories.SingleOrDefault();
     }
 
+    /// <summary>
+    /// Returns Healthy when <see cref="DataOptions.Provider"/> is missing or <c>None</c>, without opening a connection.
+    /// Any other provider runs <c>SELECT 1</c>. A configured provider with no factory is Unhealthy.
+    /// A probe that throws is Unhealthy and keeps that exception.
+    /// </summary>
+    /// <param name="context">Health check context. This check does not read it.</param>
+    /// <param name="cancellationToken">Passed to <see cref="IDbConnectionFactory.OpenConnectionAsync"/> and the probe command.</param>
+    /// <returns>Healthy when the store is not configured or answers <c>SELECT 1</c>; otherwise Unhealthy.</returns>
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         var provider = _data.CurrentValue.Provider?.Trim() ?? "";

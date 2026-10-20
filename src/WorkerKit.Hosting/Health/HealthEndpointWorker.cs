@@ -17,6 +17,11 @@ public sealed class HealthEndpointWorker : BackgroundService
     private readonly IInstanceContext _instance;
     private readonly ILogger<HealthEndpointWorker> _logger;
 
+    /// <summary>Stores the services the listen loop uses.</summary>
+    /// <param name="healthChecks">Runs the combined, <c>live</c>, or <c>ready</c> checks for each request.</param>
+    /// <param name="options">Supplies <see cref="HealthOptions.ListenUrl"/>.</param>
+    /// <param name="instance">Instance name written into each JSON body.</param>
+    /// <param name="logger">Logs when the endpoint is disabled, listening, failing, or stopped.</param>
     public HealthEndpointWorker(
         HealthCheckService healthChecks,
         IOptionsMonitor<HealthOptions> options,
@@ -29,6 +34,17 @@ public sealed class HealthEndpointWorker : BackgroundService
         _logger = logger;
     }
 
+    /// <summary>
+    /// Serves <see cref="HealthOptions.ListenUrl"/> until <paramref name="stoppingToken"/> is cancelled.
+    /// An empty URL logs once and returns. A prefix that fails to start logs the error and returns.
+    /// </summary>
+    /// <param name="stoppingToken">Cancels the accept loop and closes the listener.</param>
+    /// <returns>A task that completes when the endpoint is disabled, fails to bind, or the host stops it.</returns>
+    /// <remarks>
+    /// The prefix path runs every check, <c>live</c> runs the live tag, and <c>ready</c> runs the ready tag.
+    /// Any other path returns 404. A request that throws, other than cancellation, is logged and answered with status 500.
+    /// The JSON status code comes from <see cref="HealthResponses.StatusCode(string, HealthStatus)"/>.
+    /// </remarks>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var listenUrl = _options.CurrentValue.ListenUrl?.Trim();

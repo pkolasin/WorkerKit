@@ -8,12 +8,18 @@ using WorkerKit.Abstractions.Workers;
 using WorkerKit.Hosting.Workers;
 namespace WorkerKit.Hosting.DependencyInjection;
 
+/// <summary>Registers the framework services that every worker host receives.</summary>
 public static class InfrastructureServiceCollectionExtensions
 {
     /// <summary>
     /// Registers framework options, health checks, and <see cref="WorkerContext"/>.
     /// Connector clients, workers, and stores are added from <c>ConfigureHost</c>.
     /// </summary>
+    /// <param name="services">Service collection to update.</param>
+    /// <param name="configuration">Configuration that supplies the framework option sections.</param>
+    /// <returns>The same <paramref name="services"/> instance.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> or <paramref name="configuration"/> is null.</exception>
+    /// <remarks>Registers <see cref="TimeProvider.System"/> as the <see cref="TimeProvider"/> singleton used by the host.</remarks>
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(services);

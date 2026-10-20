@@ -3,20 +3,34 @@ using WorkerKit.Hosting;
 
 namespace WorkerKit.Hosting.Cli.Help;
 
+/// <summary>Writes a <see cref="CliCommand"/> tree to a text writer.</summary>
 public interface ICliWriter
 {
+    /// <summary>Writes <paramref name="model"/> to <paramref name="output"/>.</summary>
+    /// <param name="model">Command tree to write.</param>
+    /// <param name="output">Destination for the text.</param>
     void Write(CliCommand model, TextWriter output);
 }
 
+/// <summary>Writes the command tree as plain text, then the host configuration notes.</summary>
 public sealed class TextCliWriter : ICliWriter
 {
     private readonly WorkerAppIdentity _identity;
 
+    /// <summary>Creates a writer that appends <see cref="HostConfigurationNotes"/> for <paramref name="identity"/>.</summary>
+    /// <param name="identity">Identity used in the notes. When null, <see cref="AppIdentity.Current"/> is used.</param>
     public TextCliWriter(WorkerAppIdentity? identity = null)
     {
         _identity = identity ?? AppIdentity.Current;
     }
 
+    /// <summary>
+    /// Writes each command path, description, arguments, and options, then
+    /// <see cref="HostConfigurationNotes.Heading"/> and <see cref="HostConfigurationNotes.For"/>.
+    /// </summary>
+    /// <param name="model">Command tree to write.</param>
+    /// <param name="output">Destination for the text.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="model"/> or <paramref name="output"/> is null.</exception>
     public void Write(CliCommand model, TextWriter output)
     {
         ArgumentNullException.ThrowIfNull(model);
@@ -119,15 +133,25 @@ public sealed class TextCliWriter : ICliWriter
     }
 }
 
+/// <summary>Writes the command tree as Markdown, then the host configuration notes.</summary>
 public sealed class MarkdownCliWriter : ICliWriter
 {
     private readonly WorkerAppIdentity _identity;
 
+    /// <summary>Creates a writer that appends <see cref="HostConfigurationNotes"/> for <paramref name="identity"/>.</summary>
+    /// <param name="identity">Identity used in the notes. When null, <see cref="AppIdentity.Current"/> is used.</param>
     public MarkdownCliWriter(WorkerAppIdentity? identity = null)
     {
         _identity = identity ?? AppIdentity.Current;
     }
 
+    /// <summary>
+    /// Writes the command tree as Markdown, including a generated-file note, then
+    /// <see cref="HostConfigurationNotes.Heading"/> and <see cref="HostConfigurationNotes.For"/>.
+    /// </summary>
+    /// <param name="model">Command tree to write.</param>
+    /// <param name="output">Destination for the Markdown.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="model"/> or <paramref name="output"/> is null.</exception>
     public void Write(CliCommand model, TextWriter output)
     {
         ArgumentNullException.ThrowIfNull(model);

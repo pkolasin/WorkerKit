@@ -9,6 +9,9 @@ using WorkerKit.Abstractions.Instances;
 using WorkerKit.Abstractions.Options;
 namespace WorkerKit.Hosting.Cli.Handlers;
 
+/// <summary>
+/// Prints a redacted configuration summary for <c>check-config</c>, or the startup validation failures.
+/// </summary>
 public sealed class CheckConfigHandler
 {
     private readonly IHostEnvironment _environment;
@@ -19,6 +22,14 @@ public sealed class CheckConfigHandler
     private readonly WorkerAppIdentity _application;
     private readonly OptionsSectionCatalog _sections;
 
+    /// <summary>Creates a handler from the built host.</summary>
+    /// <param name="environment">Host environment whose name and content root are printed.</param>
+    /// <param name="configuration">Configuration values printed in the summary.</param>
+    /// <param name="services">Provider passed to <see cref="StartupValidation.GetFailures"/>.</param>
+    /// <param name="output">Writer for the summary and for validation failures.</param>
+    /// <param name="instance">Instance directories printed in the summary.</param>
+    /// <param name="application">Application identity used for the telemetry service name.</param>
+    /// <param name="sections">Catalog of option sections whose leaf keys are printed.</param>
     public CheckConfigHandler(
         IHostEnvironment environment,
         IConfiguration configuration,
@@ -37,6 +48,12 @@ public sealed class CheckConfigHandler
         _sections = sections;
     }
 
+    /// <summary>
+    /// Validates startup options. When validation fails, writes each failure and returns <see cref="ExitCodes.Error"/>.
+    /// Otherwise writes the environment, instance directories, option keys (secrets masked), telemetry, health endpoints,
+    /// and data-store readiness, then returns <see cref="ExitCodes.Success"/>.
+    /// </summary>
+    /// <returns><see cref="ExitCodes.Error"/> when validation fails; otherwise <see cref="ExitCodes.Success"/>.</returns>
     public int Execute()
     {
         var failures = StartupValidation.GetFailures(_services);

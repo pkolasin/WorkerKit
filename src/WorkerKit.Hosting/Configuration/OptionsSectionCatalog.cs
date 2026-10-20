@@ -10,8 +10,13 @@ public sealed class OptionsSectionCatalog
     private readonly List<string> _sections = [];
     private readonly HashSet<string> _seen = new(StringComparer.OrdinalIgnoreCase);
 
+    /// <summary>Section paths passed to <see cref="Remember"/>, in first-seen order.</summary>
     public IReadOnlyList<string> Sections => _sections;
 
+    /// <summary>Records <paramref name="sectionPath"/> when it has not already been recorded. Comparison is case-insensitive.</summary>
+    /// <param name="sectionPath">Configuration section path, such as a bound options section.</param>
+    /// <exception cref="ArgumentNullException"><paramref name="sectionPath"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="sectionPath"/> is empty or whitespace.</exception>
     public void Remember(string sectionPath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sectionPath);
@@ -21,6 +26,12 @@ public sealed class OptionsSectionCatalog
         }
     }
 
+    /// <summary>
+    /// Returns the catalog stored as a singleton on <paramref name="services"/>, or adds one and returns it.
+    /// </summary>
+    /// <param name="services">Service collection that holds the catalog.</param>
+    /// <returns>The existing or newly registered catalog.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="services"/> is null.</exception>
     public static OptionsSectionCatalog GetOrCreate(IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -38,6 +49,13 @@ public sealed class OptionsSectionCatalog
         return created;
     }
 
+    /// <summary>
+    /// Lists leaf keys under each remembered section. A leaf has no children and a non-null value.
+    /// Keys from one section are sorted ordinally before the next section is appended.
+    /// </summary>
+    /// <param name="configuration">Configuration to read.</param>
+    /// <returns>Leaf key paths that have a value.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="configuration"/> is null.</exception>
     public IReadOnlyList<string> LeafKeys(IConfiguration configuration)
     {
         ArgumentNullException.ThrowIfNull(configuration);
@@ -56,6 +74,10 @@ public sealed class OptionsSectionCatalog
     /// <summary>
     /// A key is secret when its last segment contains ConnectionString, Password, Secret, or Token.
     /// </summary>
+    /// <param name="key">Configuration key. The last <c>:</c> segment is tested.</param>
+    /// <returns>True when the last segment contains ConnectionString, Password, Secret, or Token.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="key"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="key"/> is empty or whitespace.</exception>
     public static bool IsSecret(string key)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(key);
