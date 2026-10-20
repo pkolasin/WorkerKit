@@ -1,9 +1,9 @@
 namespace WorkerKit.Hosting.Workers;
 
 /// <summary>
-/// <see cref="TimeProvider.Delay(TimeSpan, CancellationToken)"/> exists on .NET 9 and later.
+/// <c>TimeProvider.Delay(TimeSpan, CancellationToken)</c> exists on .NET 9 and later.
 /// This keeps the same behavior on .NET 8: <see cref="TimeProvider.System"/> uses <see cref="Task.Delay(TimeSpan, CancellationToken)"/>,
-/// and any other provider uses <see cref="TimeProvider.CreateTimer"/>.
+/// and any other provider uses <see cref="TimeProvider.CreateTimer(TimerCallback, object?, TimeSpan, TimeSpan)"/>.
 /// </summary>
 internal static class TimeProviderDelay
 {
