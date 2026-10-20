@@ -11,11 +11,10 @@ public sealed class TemplateFeedFixture : IDisposable
         Root = Path.Combine(Path.GetTempPath(), "wk-template-" + Guid.NewGuid().ToString("N"));
         Feed = Path.Combine(Root, "feed");
         Hive = Path.Combine(Root, "hive");
-        Packages = Path.Combine(Root, "packages");
+        Isolation = TemplateIsolation.Create(Root);
         Directory.CreateDirectory(Feed);
-        Directory.CreateDirectory(Packages);
-        // 0.1.1-dev is reused across runs. The global NuGet cache would keep the first nupkg with that version.
-        Environment.SetEnvironmentVariable("NUGET_PACKAGES", Packages);
+        // 0.1.1-dev is reused across runs. Isolation keeps that nupkg out of the global NuGet cache,
+        // and keeps this pack from rewriting the obj/ tree dotnet test is still building.
         var repo = RepoRoot();
         var version = "0.1.1-dev";
         foreach (var project in new[]
@@ -30,7 +29,12 @@ public sealed class TemplateFeedFixture : IDisposable
             var packed = TemplateCommand.Run(
                 "dotnet",
                 repo,
-                ["pack", Path.Combine(repo, project), "-c", "Release", "-o", Feed, "-p:Version=" + version, "--nologo", "-warnaserror"]);
+                [
+                    "pack", Path.Combine(repo, project), "-c", "Release", "-o", Feed,
+                    "-p:Version=" + version, "--nologo", "-warnaserror",
+                    "-p:RestoreConfigFile=" + Isolation.ConfigFile,
+                ],
+                Isolation);
             if (packed.ExitCode != 0)
             {
                 throw new InvalidOperationException("dotnet pack failed for " + project + Environment.NewLine + packed.Output);
@@ -41,7 +45,8 @@ public sealed class TemplateFeedFixture : IDisposable
         var installed = TemplateCommand.Run(
             "dotnet",
             repo,
-            ["new", "install", package, "--debug:custom-hive", Hive]);
+            ["new", "install", package, "--debug:custom-hive", Hive],
+            Isolation);
         if (installed.ExitCode != 0)
         {
             throw new InvalidOperationException(installed.Output);
@@ -54,7 +59,9 @@ public sealed class TemplateFeedFixture : IDisposable
 
     public string Hive { get; }
 
-    public string Packages { get; }
+    internal TemplateIsolation Isolation { get; }
+
+    public string Packages => Isolation.Packages;
 
     public static string RepoRoot()
     {
@@ -117,14 +124,15 @@ public sealed class ConnectorTemplateTests : IClassFixture<TemplateFeedFixture>
         }
 
         UseFeed(output);
-        AssertCommand(TemplateCommand.Run("dotnet", output, ["build", "Contoso.Billing.sln", "--nologo", "-warnaserror"]));
-        AssertCommand(TemplateCommand.Run("dotnet", output, ["test", "Contoso.Billing.sln", "--nologo", "-warnaserror", "--no-build"]));
+        AssertCommand(TemplateCommand.Run("dotnet", output, ["build", "Contoso.Billing.sln", "--nologo", "-warnaserror"], _feed.Isolation));
+        AssertCommand(TemplateCommand.Run("dotnet", output, ["test", "Contoso.Billing.sln", "--nologo", "-warnaserror", "--no-build"], _feed.Isolation));
 
         var publishDir = Path.Combine(output, "artifacts", "publish");
         AssertCommand(TemplateCommand.Run(
             "dotnet",
             output,
-            ["publish", Path.Combine(output, "src", "Contoso.Billing.Host", "Contoso.Billing.Host.csproj"), "-c", "Release", "-o", publishDir, "--nologo", "-warnaserror"]));
+            ["publish", Path.Combine(output, "src", "Contoso.Billing.Host", "Contoso.Billing.Host.csproj"), "-c", "Release", "-o", publishDir, "--nologo", "-warnaserror"],
+            _feed.Isolation));
         Assert.True(File.Exists(Path.Combine(publishDir, "deploy", "windows", "install-service.ps1")));
         Assert.True(File.Exists(Path.Combine(publishDir, "deploy", "systemd", "install.sh")));
         Assert.True(File.Exists(Path.Combine(publishDir, "appsettings.instance.template.json")));
@@ -138,7 +146,8 @@ public sealed class ConnectorTemplateTests : IClassFixture<TemplateFeedFixture>
         AssertCommand(TemplateCommand.Run(
             "dotnet",
             output,
-            ["build", "Contoso.Billing.sln", "--nologo", "-warnaserror", "-p:UseLocalWorkerKit=" + TemplateFeedFixture.RepoRoot()]));
+            ["build", "Contoso.Billing.sln", "--nologo", "-warnaserror", "-p:UseLocalWorkerKit=" + TemplateFeedFixture.RepoRoot()],
+            _feed.Isolation));
     }
 
     [Fact]
@@ -162,8 +171,8 @@ public sealed class ConnectorTemplateTests : IClassFixture<TemplateFeedFixture>
         }
 
         UseFeed(output);
-        AssertCommand(TemplateCommand.Run("dotnet", output, ["build", "Northwind.Shipping.sln", "--nologo", "-warnaserror"]));
-        AssertCommand(TemplateCommand.Run("dotnet", output, ["test", "Northwind.Shipping.sln", "--nologo", "-warnaserror", "--no-build"]));
+        AssertCommand(TemplateCommand.Run("dotnet", output, ["build", "Northwind.Shipping.sln", "--nologo", "-warnaserror"], _feed.Isolation));
+        AssertCommand(TemplateCommand.Run("dotnet", output, ["test", "Northwind.Shipping.sln", "--nologo", "-warnaserror", "--no-build"], _feed.Isolation));
     }
 
     [Fact]
@@ -197,11 +206,11 @@ public sealed class ConnectorTemplateTests : IClassFixture<TemplateFeedFixture>
     {
         var args = new List<string> { "new", "workerkit-connector", "--debug:custom-hive", _feed.Hive, "-o", output };
         args.AddRange(arguments);
-        return TemplateCommand.Run("dotnet", TemplateFeedFixture.RepoRoot(), args);
+        return TemplateCommand.Run("dotnet", TemplateFeedFixture.RepoRoot(), args, _feed.Isolation);
     }
 
     private (int ExitCode, string Output) Help() =>
-        TemplateCommand.Run("dotnet", TemplateFeedFixture.RepoRoot(), ["new", "workerkit-connector", "-h", "--debug:custom-hive", _feed.Hive]);
+        TemplateCommand.Run("dotnet", TemplateFeedFixture.RepoRoot(), ["new", "workerkit-connector", "-h", "--debug:custom-hive", _feed.Hive], _feed.Isolation);
 
     private void UseFeed(string output)
     {
@@ -210,13 +219,20 @@ public sealed class ConnectorTemplateTests : IClassFixture<TemplateFeedFixture>
             """
             <?xml version="1.0" encoding="utf-8"?>
             <configuration>
+              <config>
+                <add key="globalPackagesFolder" value="PACKAGES" />
+              </config>
+              <fallbackPackageFolders>
+                <clear />
+              </fallbackPackageFolders>
               <packageSources>
                 <clear />
                 <add key="local" value="FEED" />
                 <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
               </packageSources>
             </configuration>
-            """.Replace("FEED", _feed.Feed, StringComparison.Ordinal));
+            """.Replace("FEED", _feed.Feed, StringComparison.Ordinal)
+            .Replace("PACKAGES", _feed.Packages, StringComparison.Ordinal));
     }
 
     private static void DeleteBuildOutput(string output)
@@ -234,9 +250,64 @@ public sealed class ConnectorTemplateTests : IClassFixture<TemplateFeedFixture>
         Assert.True(result.ExitCode == 0, result.Output);
 }
 
+internal sealed class TemplateIsolation
+{
+    private TemplateIsolation(string root, string packages, string httpCache, string intermediate, string configFile)
+    {
+        Root = root;
+        Packages = packages;
+        HttpCache = httpCache;
+        Intermediate = intermediate;
+        ConfigFile = configFile;
+    }
+
+    public string Root { get; }
+
+    public string Packages { get; }
+
+    public string HttpCache { get; }
+
+    public string Intermediate { get; }
+
+    public string ConfigFile { get; }
+
+    public static TemplateIsolation Create(string root)
+    {
+        var packages = Path.Combine(root, "packages");
+        var httpCache = Path.Combine(root, "http-cache");
+        var intermediate = Path.Combine(root, "int").Replace('\\', '/') + "/";
+        var configFile = Path.Combine(root, "nuget.isolated.config");
+        Directory.CreateDirectory(packages);
+        Directory.CreateDirectory(httpCache);
+        Directory.CreateDirectory(Path.Combine(root, "int"));
+        File.WriteAllText(
+            configFile,
+            """
+            <?xml version="1.0" encoding="utf-8"?>
+            <configuration>
+              <config>
+                <add key="globalPackagesFolder" value="PACKAGES" />
+              </config>
+              <fallbackPackageFolders>
+                <clear />
+              </fallbackPackageFolders>
+              <packageSources>
+                <clear />
+                <add key="nuget.org" value="https://api.nuget.org/v3/index.json" protocolVersion="3" />
+              </packageSources>
+            </configuration>
+            """.Replace("PACKAGES", packages, StringComparison.Ordinal));
+        return new TemplateIsolation(root, packages, httpCache, intermediate, configFile);
+    }
+}
+
 internal static class TemplateCommand
 {
-    public static (int ExitCode, string Output) Run(string fileName, string workingDirectory, IEnumerable<string> arguments)
+    public static (int ExitCode, string Output) Run(
+        string fileName,
+        string workingDirectory,
+        IEnumerable<string> arguments,
+        TemplateIsolation isolation)
     {
         var start = new ProcessStartInfo(fileName, string.Join(" ", arguments.Select(Quote)))
         {
@@ -247,7 +318,13 @@ internal static class TemplateCommand
         };
         start.Environment["DOTNET_CLI_TELEMETRY_OPTOUT"] = "1";
         start.Environment["DOTNET_NOLOGO"] = "1";
-        start.Environment["DOTNET_CLI_HOME"] = Path.Combine(Path.GetTempPath(), "wk-cli-home");
+        start.Environment["DOTNET_CLI_HOME"] = Path.Combine(isolation.Root, "cli-home");
+        start.Environment["NUGET_PACKAGES"] = isolation.Packages;
+        start.Environment["NUGET_HTTP_CACHE_PATH"] = isolation.HttpCache;
+        start.Environment["RestorePackagesPath"] = isolation.Packages;
+        start.Environment["WorkerKitIsolatedPackages"] = isolation.Packages;
+        start.Environment["WorkerKitIsolatedIntermediate"] = isolation.Intermediate;
+        start.Environment["DisableImplicitNuGetFallbackFolder"] = "true";
         start.Environment["MSBUILDDISABLENODEREUSE"] = "1";
         // dotnet test exports the host SDK location. A generated global.json that selects
         // the net8 SDK then loads those net10 tasks and fails to resolve System.Runtime.
