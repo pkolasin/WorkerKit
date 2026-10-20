@@ -1,7 +1,34 @@
 namespace WorkerKit.Abstractions.Options;
 
+/// <summary>Checks a <see cref="HttpResilienceOptions"/> value and returns the rules it breaks.</summary>
 public static class HttpResilienceRules
 {
+    /// <summary>Checks <paramref name="options"/> and returns a message for each rule that fails.</summary>
+    /// <param name="options">Settings to check.</param>
+    /// <param name="prefix">Text placed before a range message. A null or empty prefix is omitted from those messages.</param>
+    /// <returns>The failure messages, in check order. The list is empty when every rule passes.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="options"/> is <see langword="null"/>.</exception>
+    /// <remarks>
+    /// <para>
+    /// Inclusive bounds: <see cref="HttpResilienceOptions.MaxRetryAttempts"/> 1 through 10,
+    /// <see cref="HttpResilienceOptions.RetryDelaySeconds"/> 0 through 60,
+    /// <see cref="HttpResilienceOptions.AttemptTimeoutSeconds"/> 1 through 300,
+    /// <see cref="HttpResilienceOptions.TotalRequestTimeoutSeconds"/> 1 through 600,
+    /// <see cref="HttpResilienceOptions.CircuitBreakerSamplingSeconds"/> 2 through 600,
+    /// <see cref="HttpResilienceOptions.CircuitBreakerFailureRatio"/> 0.01 through 1,
+    /// <see cref="HttpResilienceOptions.CircuitBreakerMinimumThroughput"/> 2 through 10000,
+    /// and <see cref="HttpResilienceOptions.CircuitBreakerBreakDurationSeconds"/> 1 through 600.
+    /// A null or empty <paramref name="prefix"/> leaves these messages unchanged. Any other prefix is written as
+    /// <paramref name="prefix"/>, then <c>: </c>, then the message.
+    /// </para>
+    /// <para>
+    /// <see cref="HttpResilienceOptions.TotalRequestTimeoutSeconds"/> must be greater than
+    /// <see cref="HttpResilienceOptions.AttemptTimeoutSeconds"/>.
+    /// <see cref="HttpResilienceOptions.CircuitBreakerSamplingSeconds"/> must be at least twice
+    /// <see cref="HttpResilienceOptions.AttemptTimeoutSeconds"/>.
+    /// Those two messages are always prefixed with <paramref name="prefix"/> and <c>: </c>.
+    /// </para>
+    /// </remarks>
     public static IReadOnlyList<string> Evaluate(HttpResilienceOptions options, string prefix)
     {
         ArgumentNullException.ThrowIfNull(options);

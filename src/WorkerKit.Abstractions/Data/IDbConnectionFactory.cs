@@ -10,5 +10,7 @@ namespace WorkerKit.Abstractions.Data;
 public interface IDbConnectionFactory
 {
     /// <summary>Opens a connection. The caller disposes it.</summary>
+    /// <param name="cancellationToken">Token the caller can use to cancel opening the connection.</param>
+    /// <returns>The open connection. The caller disposes it.</returns>
     ValueTask<DbConnection> OpenConnectionAsync(CancellationToken cancellationToken);
 }
