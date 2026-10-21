@@ -10,6 +10,7 @@ Generic host for data connectors and processing workers. One program runs as a c
 src/WorkerKit.Abstractions   contracts (queues, identity, options). Packs as WorkerKit.Abstractions.
 src/WorkerKit.Hosting        host, CLI, health, Serilog, OpenTelemetry, workers. Packs as WorkerKit.Hosting.
 src/WorkerKit.Soap           generic WCF binding helpers. Packs as WorkerKit.Soap.
+src/WorkerKit.Sql            SQL Server and PostgreSQL dialects, leases, bulk copy, and schema migrations. Packs as WorkerKit.Sql.
 src/WorkerKit.Testing        in-process host, one-iteration workers, and CLI capture for tests. Packs as WorkerKit.Testing.
 src/WorkerKit.Templates      `dotnet new workerkit-connector`. Packs as WorkerKit.Templates.
 src/ExampleHost              sample composition root. Assembly ExampleHost, product WorkerKitExample.
@@ -17,13 +18,14 @@ samples/Vies                 EU VIES SOAP client, `check-vat`, and the `vies-que
 samples/OpenMeteo            Open-Meteo REST client and the `open-meteo` periodic worker
 samples/Outbound             MQTT publish (Mosquitto or Azure IoT Hub) and SMS (dry-run or Twilio), plus `outbound-queue`
 tests/WorkerKit.Hosting.Tests   library tests, net8.0 and net10.0
+tests/WorkerKit.Sql.Tests       dialect, lease, bulk, and migration tests, net8.0 and net10.0
 tests/WorkerKit.Templates.Tests packs the libraries, instantiates the template, and builds it
 tests/ExampleHost.Tests          host composition tests, net10.0
 tests/WorkerKit.Samples.Tests    sample tests, net10.0
 doc/deploy.md                how to publish, install, update, and uninstall a connector
 ```
 
-There is no `WorkerKit.Data` package. `Data:Provider` `Dapper` is the hook for a connector that registers `IDbConnectionFactory`. SQL Server and PostgreSQL packages come later. Publish writes `deploy/` from WorkerKit.Hosting; this repo does not keep a `deploy/` tree of its own.
+`WorkerKit.Sql` is the SQL Server and PostgreSQL package. `Data:Provider` `Dapper` remains the hook for a connector that registers its own `IDbConnectionFactory`. Publish writes `deploy/` from WorkerKit.Hosting; this repo does not keep a `deploy/` tree of its own.
 
 `Program.cs` creates a `WorkerApp` and calls `AddExampleConnector`. That extension is the sample composition root: `check-vat` plus the Open-Meteo, VIES queue, and outbound queue workers. `WorkerHostBuilder` does not reference the samples. A connector passes its own `ConfigureHost` delegates.
 
@@ -38,11 +40,11 @@ Library namespaces match the folder under `WorkerKit.*`. The host root namespace
 
 ## Packages and versions
 
-The packages are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Testing, and WorkerKit.Templates. `src/ExampleHost` and `samples/` are not packed.
+The packages are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Sql, WorkerKit.Testing, and WorkerKit.Templates. `src/ExampleHost` and `samples/` are not packed.
 
 `dotnet pack` on a workstation, and the CI workflow, produce `0.1.1-dev.<build>`. Locally `<build>` is `local` unless `WorkerKitBuildNumber` is set. On GitHub Actions it is the workflow run number. The assembly informational version of those packs stays `0.1.1`.
 
-A version with no `-dev` suffix is packed only by [`.github/workflows/release.yml`](.github/workflows/release.yml), from the tag of a published GitHub Release. The first release tag is `v0.1.0-preview.1`, which packs `0.1.0-preview.1` and publishes the five packages and their symbol packages to nuget.org.
+A version with no `-dev` suffix is packed only by [`.github/workflows/release.yml`](.github/workflows/release.yml), from the tag of a published GitHub Release. The first release tag is `v0.1.0-preview.1`, which packs `0.1.0-preview.1` and publishes the packages named in that workflow, and their symbol packages, to nuget.org. The workflow project list is maintained separately and still names Abstractions, Hosting, Soap, Testing, and Templates. Add `src/WorkerKit.Sql` there before a release publishes the SQL package. `dotnet pack src/WorkerKit.Sql/WorkerKit.Sql.csproj` packs it from this checkout.
 
 ## Create a connector
 
@@ -275,7 +277,31 @@ dotnet tool install --global dotnet-svcutil --version 8.0.0
 
 ## Add a database
 
-The host does not ship a database project. `Data:Provider` `None` skips the probe. Set it to `Dapper` and register `IDbConnectionFactory` from `ConfigureHost` when a connector needs one. `check-config` masks the connection string. If the provider is `Dapper` and no factory is registered, the readiness check `data-store` is Unhealthy. A registered factory makes `/ready` run `SELECT 1`.
+The host does not reference a SQL client. `Data:Provider` `None` skips the probe. Set it to `Dapper` and register `IDbConnectionFactory` from `ConfigureHost` when a connector supplies its own connection. Set it to `SqlServer` or `PostgreSQL` and call `AddWorkerKitSql` from the `WorkerKit.Sql` package when the connector uses the built-in dialect. `check-config` masks the connection string. If the provider is not `None` and no factory is registered, the readiness check `data-store` is Unhealthy. A registered factory makes `/ready` run `SELECT 1`.
+
+`AddWorkerKitSql` does not read `Data:Provider` while it registers services. The dialect, the connection factory, bulk copy, and the schema runner read `IOptionsMonitor<DataOptions>` when they are first resolved. A test that calls `UseSetting` after `ConfigureHost` still selects the provider.
+
+`IWorkerKitSqlDialect` quotes identifiers and aliases. PostgreSQL folds an unquoted alias to lower case. List predicates are `IN @values` on SQL Server and `= ANY(@values)` on PostgreSQL, because Dapper expands a list only for SqlClient. Boolean predicates bind a `bool`. `CountExpression` casts `COUNT` to `int`. Claim SQL uses `READPAST`/`UPDLOCK` and `OUTPUT` on SQL Server, and `FOR UPDATE SKIP LOCKED` and `RETURNING` on PostgreSQL. `BuildClaimByIdSql` reclaims an expired lease and increments the attempt. `BuildRenewLeaseSql` extends the current worker's lease and does not increment the attempt.
+
+Map Dapper results to a class with settable properties. A positional record can fail when the provider's CLR type differs from the constructor parameter: PostgreSQL returns `bigint` as `long` and `date` as `DateOnly`, while SQL Server returns an uncast `COUNT` as `long` and `date` as `DateTime`. Cast counts with `CountExpression`.
+
+`IWorkerKitBulkCopy` loads a temporary table with `SqlBulkCopy` or PostgreSQL binary `COPY`, then inserts or upserts into the destination. Upsert inserts missing keys in key order inside a short transaction and re-selects after a unique violation or a deadlock. On a register ingestion workload, PostgreSQL binary `COPY` plus `SKIP LOCKED` scaled as parallel writers were added. The same shape on SQL Server did not.
+
+`SchemaMigrationRunner` applies numbered scripts while holding `sp_getapplock` (SQL Server, split on a `GO` line) or `pg_advisory_xact_lock` (PostgreSQL). It does not downgrade.
+
+A daily schedule is `Window.DailyAt`. The property on `PeriodicWorker` hides the type name inside the worker class, so keep the window in a field typed with an alias:
+
+```csharp
+using ScheduleWindow = WorkerKit.Hosting.Workers.Window;
+
+private static readonly ScheduleWindow Nightly = ScheduleWindow.DailyAt(new TimeOnly(2, 30), TimeZoneInfo.Utc);
+
+protected override ScheduleWindow? Window => Nightly;
+```
+
+The hosted loop waits until the next occurrence before each iteration, including the first. `RunIterationAsync` does not wait. A spring-forward gap moves to the first valid minute. An ambiguous local time uses the earlier offset, then the later one.
+
+`AddStreamingClient` registers an `HttpClient` for a large download. It does not add the standard resilience handler, because that handler buffers the body. `HttpClient.Timeout` is infinite. `SendStreamingAsync` uses `HttpCompletionOption.ResponseHeadersRead`.
 
 ## Outbound MQTT and SMS
 
@@ -347,7 +373,14 @@ The UI is at <http://localhost:18888>. Instances are distinguished by `service.i
 dotnet test
 ```
 
-The suite covers options validation (including the shipped JSON and a command-line override), `check-config`, the version and `check-vat` commands, the Open-Meteo typed client through `IHttpClientFactory` with a stub `HttpMessageHandler`, VIES number normalization and a failed SOAP span, the VIES and outbound queues, MQTT SAS and topic building, the dry-run and Twilio SMS senders, heartbeat staleness, the `/live` and `/ready` status codes and JSON, OpenTelemetry (iteration spans and metrics, health gauge, OTLP enabled only for `run` when an endpoint is set, HttpClient spans), and the in-memory queue (claim, partition lease, retry, dead-letter, shutdown, and the queue item span). Sample tests live in `tests/WorkerKit.Samples.Tests` and use `WorkerKit.Testing`. They do not call VIES, Open-Meteo, Mosquitto, Azure IoT Hub, or Twilio.
+The suite covers options validation (including the shipped JSON and a command-line override), `check-config`, the version and `check-vat` commands, the Open-Meteo typed client through `IHttpClientFactory` with a stub `HttpMessageHandler`, VIES number normalization and a failed SOAP span, the VIES and outbound queues, MQTT SAS and topic building, the dry-run and Twilio SMS senders, heartbeat staleness, the `/live` and `/ready` status codes and JSON, OpenTelemetry (iteration spans and metrics, health gauge, OTLP enabled only for `run` when an endpoint is set, HttpClient spans), the in-memory queue (claim, partition lease, retry, dead-letter, shutdown, and the queue item span), SQL dialects, and the daily window. Sample tests live in `tests/WorkerKit.Samples.Tests` and use `WorkerKit.Testing`. They do not call VIES, Open-Meteo, Mosquitto, Azure IoT Hub, or Twilio.
+
+SQL Server and PostgreSQL integration tests are `Category=Integration` and skip unless `WORKERKIT_INTEGRATION` is `1`. They start `mcr.microsoft.com/mssql/server:2022-latest` and `postgres:17` through Testcontainers. The default command above does not start Docker.
+
+```bat
+set WORKERKIT_INTEGRATION=1
+dotnet test tests/WorkerKit.Sql.Tests/WorkerKit.Sql.Tests.csproj --nologo -warnaserror --filter Category=Integration
+```
 
 ## Design decisions
 
@@ -357,7 +390,7 @@ The suite covers options validation (including the shipped JSON and a command-li
 - **Resilience per client, not one global policy.** The standard resilience handler is the supported Polly integration for `IHttpClientFactory`. Our options are a flat subset mapped onto `HttpStandardResilienceOptions`, which is easier to override from the environment than the full Polly graph.
 - **SOAP proxy is source, not a build step.** A build that downloads the VIES WSDL fails in any environment that cannot reach it. The generated client stays in `samples/Vies`.
 - **Samples are not packages.** `samples/Vies`, `samples/OpenMeteo`, and `samples/Outbound` are `IsPackable` false. CI packs Abstractions, Hosting, Soap, Testing, and Templates only. MQTTnet is referenced from the outbound sample.
-- **Database is a connector concern.** The host does not reference a SQL client. `Data:Provider` `Dapper` means the connector registered `IDbConnectionFactory`.
+- **Database is a connector concern.** The host does not reference a SQL client. `Data:Provider` `Dapper` means the connector registered `IDbConnectionFactory`. `SqlServer` and `PostgreSQL` mean `AddWorkerKitSql` registered the dialect, and the provider is read when that dialect is resolved.
 - **The default periodic worker does not call the network.** Open-Meteo runs only when latitude and longitude are set. Both queue samples stay off until `Enabled` is true. SMS defaults to dry-run. MQTT defaults to local Mosquitto.
 - **The queue in the skeleton is an abstraction plus an in-memory example.** `IWorkQueue<T>` lives in Core. `InMemoryWorkQueue<T>` is not durable. A RabbitMQ, Azure Service Bus, or SQL implementation belongs in its own project and is registered as `IWorkQueue<T>`.
 - **OpenTelemetry exports only OTLP, and only from `run`.** With no `OTEL_EXPORTER_OTLP_ENDPOINT`, the process still records traces and metrics and does not send them. Logs stay on Serilog, with an OTLP sink added beside the file and console sinks.

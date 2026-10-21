@@ -16,13 +16,13 @@ In-repo projects reference WorkerKit with `ProjectReference`. A `PackageReferenc
 
 ## Packages
 
-Publishable projects are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Testing, and WorkerKit.Templates. `src/ExampleHost` and `samples/` are not packed. Local and CI packs are `0.1.1-dev.<build>`. A version with no `-dev` suffix is produced only by the release workflow from a tag.
+Publishable projects are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Sql, WorkerKit.Testing, and WorkerKit.Templates. `src/ExampleHost` and `samples/` are not packed. Local and CI packs are `0.1.1-dev.<build>`. A version with no `-dev` suffix is produced only by the release workflow from a tag. The workflow project list is maintained outside agent changes and does not yet pack `src/WorkerKit.Sql`.
 
 ## Public API and XML docs
 
-WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, and WorkerKit.Testing set `GenerateDocumentationFile` and treat CS1591 as an error. Every public and protected member needs a `///` comment that matches the code: `summary`, and `param`, `typeparam`, `returns`, and `exception` where they apply.
+WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Sql, and WorkerKit.Testing set `GenerateDocumentationFile` and treat CS1591 as an error. Every public and protected member needs a `///` comment that matches the code: `summary`, and `param`, `typeparam`, `returns`, and `exception` where they apply.
 
-Those four projects also run `Microsoft.CodeAnalysis.PublicApiAnalyzers`. A new or changed public API belongs in that project's `PublicAPI.Unshipped.txt`. Do not edit `PublicAPI.Shipped.txt` for an unreleased change. The template package turns the analyzer off. Samples, tests, and ExampleHost do not ship XML docs.
+Those projects also run `Microsoft.CodeAnalysis.PublicApiAnalyzers`. A new or changed public API belongs in that project's `PublicAPI.Unshipped.txt`. Do not edit `PublicAPI.Shipped.txt` for an unreleased change. The template package turns the analyzer off. Samples, tests, and ExampleHost do not ship XML docs.
 
 ## Do not
 

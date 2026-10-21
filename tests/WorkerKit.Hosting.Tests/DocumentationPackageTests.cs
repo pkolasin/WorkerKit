@@ -4,7 +4,7 @@ using System.IO.Compression;
 namespace WorkerKit.Hosting.Tests;
 
 /// <summary>
-/// Packs the four library projects and checks that each nupkg contains the compiler XML file for both target frameworks.
+/// Packs the library projects and checks that each nupkg contains the compiler XML file for both target frameworks.
 /// </summary>
 public sealed class DocumentationPackageTests
 {
@@ -28,6 +28,7 @@ public sealed class DocumentationPackageTests
                 "src/WorkerKit.Abstractions/WorkerKit.Abstractions.csproj",
                 "src/WorkerKit.Hosting/WorkerKit.Hosting.csproj",
                 "src/WorkerKit.Soap/WorkerKit.Soap.csproj",
+                "src/WorkerKit.Sql/WorkerKit.Sql.csproj",
                 "src/WorkerKit.Testing/WorkerKit.Testing.csproj",
             })
             {
@@ -44,6 +45,7 @@ public sealed class DocumentationPackageTests
                 "WorkerKit.Abstractions",
                 "WorkerKit.Hosting",
                 "WorkerKit.Soap",
+                "WorkerKit.Sql",
                 "WorkerKit.Testing",
             })
             {

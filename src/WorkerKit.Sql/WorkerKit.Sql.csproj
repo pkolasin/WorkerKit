@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net8.0</TargetFrameworks>
+    <TargetFramework></TargetFramework>
+    <IsPackable>true</IsPackable>
+    <RootNamespace>WorkerKit.Sql</RootNamespace>
+    <Description>SQL Server and PostgreSQL helpers for WorkerKit connectors: dialects, leased queues, bulk copy, and schema migrations.</Description>
+    <PackageDescription>SQL Server and PostgreSQL helpers for WorkerKit connectors: dialects, leased queues, bulk copy, and schema migrations.</PackageDescription>
+    <PackageTags>workerkit;sql;dapper;sqlserver;postgresql</PackageTags>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WorkerKit.Abstractions\WorkerKit.Abstractions.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Dapper" />
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Npgsql" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+    <PackageReference Include="System.Security.Cryptography.Xml" />
+  </ItemGroup>
+</Project>

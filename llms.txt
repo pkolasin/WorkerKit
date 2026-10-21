@@ -1,6 +1,6 @@
 # WorkerKit
 
-> Generic host for data connectors and processing workers. One program runs as a console app, in Docker, as a Windows Service, and as a systemd service. Packages are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Testing, and WorkerKit.Templates. ExampleHost and the samples are not packages.
+> Generic host for data connectors and processing workers. One program runs as a console app, in Docker, as a Windows Service, and as a systemd service. Packages are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Sql, WorkerKit.Testing, and WorkerKit.Templates. ExampleHost and the samples are not packages. The release workflow's project list is maintained separately and still packs the original five until `src/WorkerKit.Sql` is added there.
 
 The libraries multi-target `net8.0` and `net10.0`. A project that targets `net9.0` uses the `net8.0` assets. There is no `net9.0` target. The template (`dotnet new workerkit-connector`) offers `net10.0` (default) and `net8.0`.
 
@@ -12,7 +12,7 @@ One install can run several processes. The instance directory holds that process
 
 `WorkerKit.Testing` builds the same host in process. `RunIterationAsync` runs one periodic pass and does not sleep. `RunCommandAsync` invokes the command tree. `CliReference.AssertUpToDate` compares `help --markdown` with `doc/cli.md`.
 
-XML documentation for the four library assemblies ships in each nupkg. The compiler XML files are the API reference. The pages below are the narrative reference.
+XML documentation for the library assemblies ships in each nupkg. The compiler XML files are the API reference. The pages below are the narrative reference.
 
 ## Start
 
@@ -28,6 +28,7 @@ XML documentation for the four library assemblies ships in each nupkg. The compi
 - [WorkerKit.Abstractions](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Abstractions/README.md): queues, identity, options, and reflection-free command contracts
 - [WorkerKit.Hosting](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Hosting/README.md): host, CLI, workers, health, Serilog, and OpenTelemetry
 - [WorkerKit.Soap](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Soap/README.md): WCF binding and channel abort helpers, no generated client
+- [WorkerKit.Sql](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Sql/README.md): SQL Server and PostgreSQL dialects, leased queues, bulk copy, and schema migrations
 - [WorkerKit.Testing](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Testing/README.md): `WorkerAppTester`, one-iteration workers, and `CliReference`
 - [WorkerKit.Templates](https://github.com/pkolasin/WorkerKit/blob/main/src/WorkerKit.Templates/README.md): `dotnet new workerkit-connector` parameters
 
