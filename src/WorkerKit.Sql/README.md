@@ -25,7 +25,7 @@ builder.Services.AddWorkerKitSql();
 
 Claim SQL takes available rows whose lease is null or expired. SQL Server uses `READPAST` and `UPDLOCK` and returns rows with `OUTPUT`. PostgreSQL uses `FOR UPDATE SKIP LOCKED` and `RETURNING`. Both increment the attempt. `BuildClaimByIdSql` reclaims one expired row and increments the attempt. `BuildRenewLeaseSql` extends a lease the named worker still holds and does not increment the attempt.
 
-`WorkerKitInsert.InsertIfMissingAsync` inserts a row when its key is missing. PostgreSQL uses `ON CONFLICT DO NOTHING` and re-reads the id. SQL Server inserts and, on errors 2601 or 2627, re-reads the id. Call the SQL Server path without a transaction: a duplicate key aborts the transaction that contained the insert. The returned id is cast to `long`.
+`WorkerKitInsert.InsertIfMissingAsync` inserts a row when its key is missing. PostgreSQL uses `ON CONFLICT DO NOTHING` and re-reads the id. SQL Server inserts with `OUTPUT inserted.<id column>`, using `InsertIfMissingSql.IdColumn`, and re-reads the id on errors 2601 or 2627. Call the SQL Server path without a transaction: a duplicate key aborts the transaction that contained the insert. The returned id is cast to `long`.
 
 ## Bulk copy
 

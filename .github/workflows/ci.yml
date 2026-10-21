@@ -26,6 +26,7 @@ jobs:
           dotnet pack src/WorkerKit.Abstractions/WorkerKit.Abstractions.csproj -c Release -o artifacts/packages --nologo
           dotnet pack src/WorkerKit.Hosting/WorkerKit.Hosting.csproj -c Release -o artifacts/packages --nologo
           dotnet pack src/WorkerKit.Soap/WorkerKit.Soap.csproj -c Release -o artifacts/packages --nologo
+          dotnet pack src/WorkerKit.Sql/WorkerKit.Sql.csproj -c Release -o artifacts/packages --nologo
           dotnet pack src/WorkerKit.Testing/WorkerKit.Testing.csproj -c Release -o artifacts/packages --nologo
           dotnet pack src/WorkerKit.Templates/WorkerKit.Templates.csproj -c Release -o artifacts/packages --nologo
       - uses: actions/upload-artifact@v7

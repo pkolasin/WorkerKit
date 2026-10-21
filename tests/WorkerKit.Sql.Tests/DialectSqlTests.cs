@@ -95,13 +95,37 @@ public sealed class DialectSqlTests
         var sqlServer = new SqlServerDialect().BuildInsertIfMissingSql(insert);
         var postgres = new PostgreSqlDialect().BuildInsertIfMissingSql(insert);
 
-        Assert.Contains("OUTPUT CAST([Id] AS bigint) AS [Id]", sqlServer, StringComparison.Ordinal);
+        Assert.Contains("OUTPUT CAST(inserted.[Id] AS bigint) AS [Id]", sqlServer, StringComparison.Ordinal);
         Assert.DoesNotContain("ON CONFLICT", sqlServer, StringComparison.Ordinal);
         Assert.Contains("ON CONFLICT (\"Code\") DO NOTHING", postgres, StringComparison.Ordinal);
         Assert.Contains("RETURNING \"Id\"::bigint AS \"Id\"", postgres, StringComparison.Ordinal);
         Assert.Contains("\"Code\" = @Code", new PostgreSqlDialect().BuildSelectIdByKeySql(insert), StringComparison.Ordinal);
         Assert.Throws<ArgumentException>(() => new SqlServerDialect().BuildInsertIfMissingSql(
             new InsertIfMissingSql("Register", ["Code"], ["Missing"])));
+    }
+
+    [Fact]
+    public void Insert_if_missing_uses_the_configured_id_column()
+    {
+        var insert = new InsertIfMissingSql("Register", ["Code"], ["Code"], idColumn: "SurrogateKey");
+        var sqlServer = new SqlServerDialect();
+        var postgres = new PostgreSqlDialect();
+
+        var insertSql = sqlServer.BuildInsertIfMissingSql(insert);
+        Assert.Contains("OUTPUT CAST(inserted.[SurrogateKey] AS bigint) AS [Id]", insertSql, StringComparison.Ordinal);
+        Assert.DoesNotContain("inserted.[Id]", insertSql, StringComparison.Ordinal);
+        Assert.Contains(
+            "CAST([SurrogateKey] AS bigint) AS [Id]",
+            sqlServer.BuildSelectIdByKeySql(insert),
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "RETURNING \"SurrogateKey\"::bigint AS \"Id\"",
+            postgres.BuildInsertIfMissingSql(insert),
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "\"SurrogateKey\"::bigint AS \"Id\"",
+            postgres.BuildSelectIdByKeySql(insert),
+            StringComparison.Ordinal);
     }
 
     [Fact]

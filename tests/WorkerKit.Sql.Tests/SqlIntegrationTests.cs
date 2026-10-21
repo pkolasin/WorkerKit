@@ -46,6 +46,7 @@ public sealed class SqlIntegrationTests
             await CreateWorkTableAsync(dialect, connection, work);
             await CreateBatchTableAsync(dialect, connection, batch);
             await ExerciseLeaseAsync(dialect, connection, work);
+            await ExerciseConcurrentClaimAsync(dialect, connectionString, "Race" + suffix);
             await ExercisePredicatesAsync(dialect, connection, work);
             await ExerciseBulkAsync(dialect, bulk, connection, connectionString, batch);
             await ExerciseMigrationsAsync(dialect, connectionString, schema, probe);
@@ -84,11 +85,18 @@ public sealed class SqlIntegrationTests
                 new { Id = expired.Id, LeaseSeconds = 30, Worker = "worker-c" });
             Assert.Equal(expired.Id, reclaimed.Id);
             Assert.Equal(2, reclaimed.Attempt);
+            var beforeRenew = await connection.QuerySingleAsync<DateTime>(
+                $"SELECT {until} FROM {quoted} WHERE {id} = @Id",
+                new { expired.Id });
 
             var renewed = await connection.QuerySingleAsync<LeaseRow>(
                 dialect.BuildRenewLeaseSql(lease),
                 new { Id = expired.Id, LeaseSeconds = 300, Worker = "worker-c" });
             Assert.Equal(2, renewed.Attempt);
+            var afterRenew = await connection.QuerySingleAsync<DateTime>(
+                $"SELECT {until} FROM {quoted} WHERE {id} = @Id",
+                new { expired.Id });
+            Assert.True(afterRenew > beforeRenew);
             var wrongWorker = (await connection.QueryAsync<LeaseRow>(
                 dialect.BuildRenewLeaseSql(lease),
                 new { Id = expired.Id, LeaseSeconds = 300, Worker = "worker-z" })).ToArray();
@@ -98,6 +106,41 @@ public sealed class SqlIntegrationTests
                 $"SELECT {dialect.QuoteIdentifier("Attempt")} FROM {quoted} WHERE {id} = @Id",
                 new { expired.Id });
             Assert.Equal(2, attempt);
+        }
+
+        private static async Task ExerciseConcurrentClaimAsync(
+            IWorkerKitSqlDialect dialect,
+            string connectionString,
+            string table)
+        {
+            await using (var setup = dialect.CreateConnection(connectionString))
+            {
+                await setup.OpenAsync();
+                await CreateWorkTableAsync(dialect, setup, table);
+                var quoted = dialect.QuoteIdentifier(table);
+                var insert = $"""
+                    INSERT INTO {quoted} ({dialect.QuoteIdentifier("Code")}, {dialect.QuoteIdentifier("Active")}, {dialect.QuoteIdentifier("AvailableAt")}, {dialect.QuoteIdentifier("Attempt")})
+                    VALUES (@Code, @Active, {dialect.UtcNowExpression}, 0);
+                    """;
+                for (var index = 0; index < 8; index++)
+                {
+                    await setup.ExecuteAsync(insert, new { Code = "P" + index, Active = true });
+                }
+            }
+
+            var sql = dialect.BuildClaimSql(new WorkLeaseSql(table));
+            var claimed = await Task.WhenAll(ClaimAsync("worker-left"), ClaimAsync("worker-right"));
+            var ids = claimed.SelectMany(batch => batch).ToArray();
+            Assert.Equal(8, ids.Distinct().Count());
+            Assert.Equal(ids.Length, ids.Distinct().Count());
+
+            async Task<long[]> ClaimAsync(string worker)
+            {
+                await using var connection = dialect.CreateConnection(connectionString);
+                await connection.OpenAsync();
+                var rows = await connection.QueryAsync<LeaseRow>(sql, new { Max = 8, LeaseSeconds = 120, Worker = worker });
+                return rows.Select(row => row.Id).ToArray();
+            }
         }
 
         private static async Task ExercisePredicatesAsync(IWorkerKitSqlDialect dialect, DbConnection connection, string table)
@@ -159,6 +202,21 @@ public sealed class SqlIntegrationTests
             ]);
             var count = await connection.QuerySingleAsync<CountRow>($"SELECT {dialect.CountExpression()} FROM {dialect.QuoteIdentifier(table)};");
             Assert.Equal(3, count.Count);
+
+            var quoted = dialect.QuoteIdentifier(table);
+            var alphaId = await connection.QuerySingleAsync<long>(
+                $"SELECT {dialect.QuoteIdentifier("Id")} FROM {quoted} WHERE {dialect.QuoteIdentifier("Code")} = @Code",
+                new { Code = "alpha" });
+            var returned = await bulk.BulkUpsertReturningIdsAsync(connection, table, "Id", ["Code"], columns,
+            [
+                new StagedRow("alpha", true, new DateOnly(2026, 4, 1)),
+                new StagedRow("delta", true, new DateOnly(2026, 4, 4)),
+            ]);
+            Assert.Equal(2, returned.Count);
+            Assert.Contains(alphaId, returned);
+            Assert.Equal(returned.Distinct().Count(), returned.Count);
+            var afterReturning = await connection.QuerySingleAsync<CountRow>($"SELECT {dialect.CountExpression()} FROM {quoted};");
+            Assert.Equal(4, afterReturning.Count);
 
             var observed = dialect.Provider == WorkerKitSqlProvider.SqlServer
                 ? $"CONVERT(char(10), {dialect.QuoteIdentifier("ObservedOn")}, 23)"
@@ -229,16 +287,26 @@ public sealed class SqlIntegrationTests
                 };
             var runner = new SchemaMigrationRunner(dialect, new SchemaVersionStore(dialect), new ConnectionFactory(dialect, connectionString));
             await runner.MigrateAsync(schema, migrations);
-            await runner.MigrateAsync(schema, migrations);
 
             await using var connection = dialect.CreateConnection(connectionString);
             await connection.OpenAsync();
-            var count = await connection.QuerySingleAsync<CountRow>($"SELECT {dialect.CountExpression()} FROM {quoted};");
-            Assert.Equal(2, count.Count);
-            var version = await connection.QuerySingleAsync<int>(
-                dialect.BuildGetSchemaVersionSql(),
-                new { SchemaName = schema });
-            Assert.Equal(2, version);
+            Assert.Equal(2, await StoredVersionAsync(connection));
+            Assert.Equal(2, await ProbeCountAsync(connection));
+
+            await runner.MigrateAsync(schema, migrations);
+            Assert.Equal(2, await StoredVersionAsync(connection));
+            Assert.Equal(2, await ProbeCountAsync(connection));
+
+            async Task<int> StoredVersionAsync(DbConnection open)
+            {
+                return await open.QuerySingleAsync<int>(dialect.BuildGetSchemaVersionSql(), new { SchemaName = schema });
+            }
+
+            async Task<int> ProbeCountAsync(DbConnection open)
+            {
+                var count = await open.QuerySingleAsync<CountRow>($"SELECT {dialect.CountExpression()} FROM {quoted};");
+                return count.Count;
+            }
         }
 
         private static async Task CreateWorkTableAsync(IWorkerKitSqlDialect dialect, DbConnection connection, string table)

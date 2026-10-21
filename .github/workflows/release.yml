@@ -40,6 +40,7 @@ jobs:
             src/WorkerKit.Abstractions/WorkerKit.Abstractions.csproj
             src/WorkerKit.Hosting/WorkerKit.Hosting.csproj
             src/WorkerKit.Soap/WorkerKit.Soap.csproj
+            src/WorkerKit.Sql/WorkerKit.Sql.csproj
             src/WorkerKit.Testing/WorkerKit.Testing.csproj
             src/WorkerKit.Templates/WorkerKit.Templates.csproj
           )

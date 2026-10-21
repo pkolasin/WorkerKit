@@ -44,7 +44,7 @@ The packages are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, Work
 
 `dotnet pack` on a workstation, and the CI workflow, produce `0.1.1-dev.<build>`. Locally `<build>` is `local` unless `WorkerKitBuildNumber` is set. On GitHub Actions it is the workflow run number. The assembly informational version of those packs stays `0.1.1`.
 
-A version with no `-dev` suffix is packed only by [`.github/workflows/release.yml`](.github/workflows/release.yml), from the tag of a published GitHub Release. The first release tag is `v0.1.0-preview.1`, which packs `0.1.0-preview.1` and publishes the packages named in that workflow, and their symbol packages, to nuget.org. The workflow project list is maintained separately and still names Abstractions, Hosting, Soap, Testing, and Templates. Add `src/WorkerKit.Sql` there before a release publishes the SQL package. `dotnet pack src/WorkerKit.Sql/WorkerKit.Sql.csproj` packs it from this checkout.
+A version with no `-dev` suffix is packed only by [`.github/workflows/release.yml`](.github/workflows/release.yml), from the tag of a published GitHub Release. The first release tag is `v0.1.0-preview.1`, which packs `0.1.0-preview.1` and publishes the packages named in that workflow, and their symbol packages, to nuget.org. CI and release both pack Abstractions, Hosting, Soap, Sql, Testing, and Templates.
 
 ## Create a connector
 

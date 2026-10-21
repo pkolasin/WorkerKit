@@ -136,7 +136,7 @@ public interface IWorkerKitSqlDialect
     /// <summary>
     /// Inserts one row when the key is missing.
     /// PostgreSQL appends <c>ON CONFLICT DO NOTHING</c>.
-    /// SQL Server is a plain insert with <c>OUTPUT</c>; <see cref="RequiresDuplicateKeyRetry"/> tells the caller to re-read after errors 2601 and 2627.
+    /// SQL Server is a plain insert whose <c>OUTPUT</c> reads <c>inserted</c> and <see cref="InsertIfMissingSql.IdColumn"/>. <see cref="RequiresDuplicateKeyRetry"/> tells the caller to re-read after errors 2601 and 2627.
     /// The returned id is cast to <see cref="long"/>.
     /// </summary>
     /// <param name="insert">Table, columns, and key.</param>

@@ -1,6 +1,6 @@
 # WorkerKit
 
-> Generic host for data connectors and processing workers. One program runs as a console app, in Docker, as a Windows Service, and as a systemd service. Packages are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Sql, WorkerKit.Testing, and WorkerKit.Templates. ExampleHost and the samples are not packages. The release workflow's project list is maintained separately and still packs the original five until `src/WorkerKit.Sql` is added there.
+> Generic host for data connectors and processing workers. One program runs as a console app, in Docker, as a Windows Service, and as a systemd service. Packages are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Sql, WorkerKit.Testing, and WorkerKit.Templates. ExampleHost and the samples are not packages. CI and release pack all six.
 
 The libraries multi-target `net8.0` and `net10.0`. A project that targets `net9.0` uses the `net8.0` assets. There is no `net9.0` target. The template (`dotnet new workerkit-connector`) offers `net10.0` (default) and `net8.0`.
 

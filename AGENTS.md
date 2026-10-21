@@ -16,7 +16,7 @@ In-repo projects reference WorkerKit with `ProjectReference`. A `PackageReferenc
 
 ## Packages
 
-Publishable projects are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Sql, WorkerKit.Testing, and WorkerKit.Templates. `src/ExampleHost` and `samples/` are not packed. Local and CI packs are `0.1.1-dev.<build>`. A version with no `-dev` suffix is produced only by the release workflow from a tag. The workflow project list is maintained outside agent changes and does not yet pack `src/WorkerKit.Sql`.
+Publishable projects are WorkerKit.Abstractions, WorkerKit.Hosting, WorkerKit.Soap, WorkerKit.Sql, WorkerKit.Testing, and WorkerKit.Templates. `src/ExampleHost` and `samples/` are not packed. Local and CI packs are `0.1.1-dev.<build>`. A version with no `-dev` suffix is produced only by the release workflow from a tag. CI and release pack `src/WorkerKit.Sql` with the other libraries.
 
 ## Public API and XML docs
 

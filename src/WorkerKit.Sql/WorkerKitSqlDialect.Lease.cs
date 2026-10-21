@@ -31,23 +31,24 @@ public abstract partial class WorkerKitSqlDialect
         var table = QuoteIdentifier(insert.Table);
         var columns = insert.Columns.Select(QuoteIdentifier).ToArray();
         var parameters = insert.Columns.Select(SqlText.Parameter).ToArray();
-        var id = CastId(QuoteIdentifier(insert.IdColumn), QuoteAlias(insert.IdAlias));
         var columnList = string.Join(", ", columns);
         var valueList = string.Join(", ", parameters);
         if (!IsSqlServer)
         {
             var keys = string.Join(", ", insert.KeyColumns.Select(QuoteIdentifier));
+            var returning = CastId(QuoteIdentifier(insert.IdColumn), QuoteAlias(insert.IdAlias));
             return $"""
                 INSERT INTO {table} ({columnList})
                 VALUES ({valueList})
                 ON CONFLICT ({keys}) DO NOTHING
-                RETURNING {id};
+                RETURNING {returning};
                 """;
         }
 
+        var output = CastId($"inserted.{QuoteIdentifier(insert.IdColumn)}", QuoteAlias(insert.IdAlias));
         return $"""
             INSERT INTO {table} ({columnList})
-            OUTPUT {id}
+            OUTPUT {output}
             VALUES ({valueList});
             """;
     }
