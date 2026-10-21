@@ -1,0 +1,168 @@
+#nullable enable
+WorkerKit.Sql.BulkColumn<T>
+WorkerKit.Sql.BulkColumn<T>.BulkColumn(string! name, System.Type! clrType, System.Func<T, object?>! value) -> void
+WorkerKit.Sql.BulkColumn<T>.ClrType.get -> System.Type!
+WorkerKit.Sql.BulkColumn<T>.Definition.get -> WorkerKit.Sql.BulkColumnDefinition!
+WorkerKit.Sql.BulkColumn<T>.Name.get -> string!
+WorkerKit.Sql.BulkColumn<T>.Value.get -> System.Func<T, object?>!
+WorkerKit.Sql.BulkColumnDefinition
+WorkerKit.Sql.BulkColumnDefinition.BulkColumnDefinition(string! name, System.Type! clrType) -> void
+WorkerKit.Sql.BulkColumnDefinition.ClrType.get -> System.Type!
+WorkerKit.Sql.BulkColumnDefinition.Name.get -> string!
+WorkerKit.Sql.ISchemaVersionStore
+WorkerKit.Sql.ISchemaVersionStore.EnsureCreatedAsync(System.Data.Common.DbConnection! connection, System.Data.Common.DbTransaction! transaction, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+WorkerKit.Sql.ISchemaVersionStore.GetVersionAsync(System.Data.Common.DbConnection! connection, System.Data.Common.DbTransaction! transaction, string! schemaName, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
+WorkerKit.Sql.ISchemaVersionStore.SetVersionAsync(System.Data.Common.DbConnection! connection, System.Data.Common.DbTransaction! transaction, string! schemaName, int version, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+WorkerKit.Sql.IWorkerKitBulkCopy
+WorkerKit.Sql.IWorkerKitBulkCopy.BulkInsertAsync<T>(System.Data.Common.DbConnection! connection, string! destinationTable, string! idColumn, System.Collections.Generic.IReadOnlyList<WorkerKit.Sql.BulkColumn<T>!>! columns, System.Collections.Generic.IReadOnlyList<T>! rows, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<long>!>!
+WorkerKit.Sql.IWorkerKitBulkCopy.BulkUpsertAsync<T>(System.Data.Common.DbConnection! connection, string! destinationTable, System.Collections.Generic.IReadOnlyList<string!>! keyColumns, System.Collections.Generic.IReadOnlyList<WorkerKit.Sql.BulkColumn<T>!>! columns, System.Collections.Generic.IReadOnlyList<T>! rows, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+WorkerKit.Sql.IWorkerKitBulkCopy.BulkUpsertReturningIdsAsync<T>(System.Data.Common.DbConnection! connection, string! destinationTable, string! idColumn, System.Collections.Generic.IReadOnlyList<string!>! keyColumns, System.Collections.Generic.IReadOnlyList<WorkerKit.Sql.BulkColumn<T>!>! columns, System.Collections.Generic.IReadOnlyList<T>! rows, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<long>!>!
+WorkerKit.Sql.IWorkerKitBulkCopy.CopyToTemporaryAsync<T>(System.Data.Common.DbConnection! connection, System.Data.Common.DbTransaction? transaction, string! temporaryTable, System.Collections.Generic.IReadOnlyList<WorkerKit.Sql.BulkColumn<T>!>! columns, System.Collections.Generic.IReadOnlyList<T>! rows, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+WorkerKit.Sql.IWorkerKitSqlDialect
+WorkerKit.Sql.IWorkerKitSqlDialect.AcquireSchemaLockAsync(System.Data.Common.DbConnection! connection, System.Data.Common.DbTransaction! transaction, string! schemaName, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+WorkerKit.Sql.IWorkerKitSqlDialect.BooleanPredicate(string! column, string! parameterName) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BooleanTypeName.get -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildBulkInsertReturningIdsSql(string! destinationTable, string! stageTable, string! idColumn, System.Collections.Generic.IReadOnlyList<string!>! columns) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildClaimByIdSql(WorkerKit.Sql.WorkLeaseSql! lease) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildClaimSql(WorkerKit.Sql.WorkLeaseSql! lease) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildCountMatchedKeysSql(string! destinationTable, string! stageTable, System.Collections.Generic.IReadOnlyList<string!>! keyColumns) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildCountStagedKeysSql(string! stageTable, System.Collections.Generic.IReadOnlyList<string!>! keyColumns) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildCreateTemporaryTableSql(string! tableName, System.Collections.Generic.IReadOnlyList<WorkerKit.Sql.BulkColumnDefinition!>! columns) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildDropTemporaryTableSql(string! tableName) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildEnsureSchemaVersionTableSql() -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildGetSchemaVersionSql() -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildInsertIfMissingSql(WorkerKit.Sql.InsertIfMissingSql! insert) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildInsertMissingSql(string! destinationTable, string! stageTable, System.Collections.Generic.IReadOnlyList<string!>! columns, System.Collections.Generic.IReadOnlyList<string!>! keyColumns) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildRenewLeaseSql(WorkerKit.Sql.WorkLeaseSql! lease) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildReselectIdsSql(string! destinationTable, string! stageTable, string! idColumn, System.Collections.Generic.IReadOnlyList<string!>! keyColumns) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildSchemaLockSql() -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildSelectIdByKeySql(WorkerKit.Sql.InsertIfMissingSql! insert) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.BuildUpsertSchemaVersionSql() -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.Classify(System.Exception! exception) -> WorkerKit.Sql.WorkerKitSqlErrorKind
+WorkerKit.Sql.IWorkerKitSqlDialect.CountExpression(string! alias = "Count") -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.CreateConnection(string! connectionString) -> System.Data.Common.DbConnection!
+WorkerKit.Sql.IWorkerKitSqlDialect.CreateTemporaryTableName() -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.IsDeadlock(System.Exception! exception) -> bool
+WorkerKit.Sql.IWorkerKitSqlDialect.IsTransient(System.Exception! exception) -> bool
+WorkerKit.Sql.IWorkerKitSqlDialect.IsUniqueViolation(System.Exception! exception) -> bool
+WorkerKit.Sql.IWorkerKitSqlDialect.ListPredicate(string! column, string! parameterName) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.Provider.get -> WorkerKit.Sql.WorkerKitSqlProvider
+WorkerKit.Sql.IWorkerKitSqlDialect.QuoteAlias(string! alias) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.QuoteIdentifier(string! identifier) -> string!
+WorkerKit.Sql.IWorkerKitSqlDialect.RequiresDuplicateKeyRetry.get -> bool
+WorkerKit.Sql.IWorkerKitSqlDialect.SplitBatches(string! script) -> System.Collections.Generic.IReadOnlyList<string!>!
+WorkerKit.Sql.IWorkerKitSqlDialect.UtcNowExpression.get -> string!
+WorkerKit.Sql.InsertIfMissingSql
+WorkerKit.Sql.InsertIfMissingSql.Columns.get -> System.Collections.Generic.IReadOnlyList<string!>!
+WorkerKit.Sql.InsertIfMissingSql.IdAlias.get -> string!
+WorkerKit.Sql.InsertIfMissingSql.IdAlias.init -> void
+WorkerKit.Sql.InsertIfMissingSql.IdColumn.get -> string!
+WorkerKit.Sql.InsertIfMissingSql.InsertIfMissingSql(string! table, System.Collections.Generic.IReadOnlyList<string!>! columns, System.Collections.Generic.IReadOnlyList<string!>! keyColumns, string! idColumn = "Id") -> void
+WorkerKit.Sql.InsertIfMissingSql.KeyColumns.get -> System.Collections.Generic.IReadOnlyList<string!>!
+WorkerKit.Sql.InsertIfMissingSql.Table.get -> string!
+WorkerKit.Sql.PostgreSqlDialect
+WorkerKit.Sql.PostgreSqlDialect.PostgreSqlDialect() -> void
+WorkerKit.Sql.SchemaMigration
+WorkerKit.Sql.SchemaMigration.SchemaMigration(int version, string! sql) -> void
+WorkerKit.Sql.SchemaMigration.Sql.get -> string!
+WorkerKit.Sql.SchemaMigration.Version.get -> int
+WorkerKit.Sql.SchemaMigrationRunner
+WorkerKit.Sql.SchemaMigrationRunner.MigrateAsync(string! schemaName, System.Collections.Generic.IReadOnlyList<WorkerKit.Sql.SchemaMigration!>! migrations, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+WorkerKit.Sql.SchemaMigrationRunner.SchemaMigrationRunner(WorkerKit.Sql.IWorkerKitSqlDialect! dialect, WorkerKit.Sql.ISchemaVersionStore! store, WorkerKit.Abstractions.Data.IDbConnectionFactory! connections) -> void
+WorkerKit.Sql.SchemaVersionStore
+WorkerKit.Sql.SchemaVersionStore.EnsureCreatedAsync(System.Data.Common.DbConnection! connection, System.Data.Common.DbTransaction! transaction, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+WorkerKit.Sql.SchemaVersionStore.GetVersionAsync(System.Data.Common.DbConnection! connection, System.Data.Common.DbTransaction! transaction, string! schemaName, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!
+WorkerKit.Sql.SchemaVersionStore.SchemaVersionStore(WorkerKit.Sql.IWorkerKitSqlDialect! dialect) -> void
+WorkerKit.Sql.SchemaVersionStore.SetVersionAsync(System.Data.Common.DbConnection! connection, System.Data.Common.DbTransaction! transaction, string! schemaName, int version, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+WorkerKit.Sql.SqlServerDialect
+WorkerKit.Sql.SqlServerDialect.SqlServerDialect() -> void
+WorkerKit.Sql.WorkLeaseSql
+WorkerKit.Sql.WorkLeaseSql.AttemptColumn.get -> string!
+WorkerKit.Sql.WorkLeaseSql.AttemptColumn.init -> void
+WorkerKit.Sql.WorkLeaseSql.AvailableAtColumn.get -> string!
+WorkerKit.Sql.WorkLeaseSql.AvailableAtColumn.init -> void
+WorkerKit.Sql.WorkLeaseSql.IdColumn.get -> string!
+WorkerKit.Sql.WorkLeaseSql.IdColumn.init -> void
+WorkerKit.Sql.WorkLeaseSql.IdParameter.get -> string!
+WorkerKit.Sql.WorkLeaseSql.IdParameter.init -> void
+WorkerKit.Sql.WorkLeaseSql.LeaseSecondsParameter.get -> string!
+WorkerKit.Sql.WorkLeaseSql.LeaseSecondsParameter.init -> void
+WorkerKit.Sql.WorkLeaseSql.LeaseUntilColumn.get -> string!
+WorkerKit.Sql.WorkLeaseSql.LeaseUntilColumn.init -> void
+WorkerKit.Sql.WorkLeaseSql.LeasedByColumn.get -> string!
+WorkerKit.Sql.WorkLeaseSql.LeasedByColumn.init -> void
+WorkerKit.Sql.WorkLeaseSql.MaxParameter.get -> string!
+WorkerKit.Sql.WorkLeaseSql.MaxParameter.init -> void
+WorkerKit.Sql.WorkLeaseSql.ReturningColumns.get -> System.Collections.Generic.IReadOnlyList<string!>!
+WorkerKit.Sql.WorkLeaseSql.ReturningColumns.init -> void
+WorkerKit.Sql.WorkLeaseSql.Table.get -> string!
+WorkerKit.Sql.WorkLeaseSql.WorkLeaseSql(string! table) -> void
+WorkerKit.Sql.WorkLeaseSql.WorkerParameter.get -> string!
+WorkerKit.Sql.WorkLeaseSql.WorkerParameter.init -> void
+WorkerKit.Sql.WorkerKitBulkCopy
+WorkerKit.Sql.WorkerKitBulkCopy.BulkInsertAsync<T>(System.Data.Common.DbConnection! connection, string! destinationTable, string! idColumn, System.Collections.Generic.IReadOnlyList<WorkerKit.Sql.BulkColumn<T>!>! columns, System.Collections.Generic.IReadOnlyList<T>! rows, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<long>!>!
+WorkerKit.Sql.WorkerKitBulkCopy.BulkUpsertAsync<T>(System.Data.Common.DbConnection! connection, string! destinationTable, System.Collections.Generic.IReadOnlyList<string!>! keyColumns, System.Collections.Generic.IReadOnlyList<WorkerKit.Sql.BulkColumn<T>!>! columns, System.Collections.Generic.IReadOnlyList<T>! rows, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+WorkerKit.Sql.WorkerKitBulkCopy.BulkUpsertReturningIdsAsync<T>(System.Data.Common.DbConnection! connection, string! destinationTable, string! idColumn, System.Collections.Generic.IReadOnlyList<string!>! keyColumns, System.Collections.Generic.IReadOnlyList<WorkerKit.Sql.BulkColumn<T>!>! columns, System.Collections.Generic.IReadOnlyList<T>! rows, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Collections.Generic.IReadOnlyList<long>!>!
+WorkerKit.Sql.WorkerKitBulkCopy.CopyToTemporaryAsync<T>(System.Data.Common.DbConnection! connection, System.Data.Common.DbTransaction? transaction, string! temporaryTable, System.Collections.Generic.IReadOnlyList<WorkerKit.Sql.BulkColumn<T>!>! columns, System.Collections.Generic.IReadOnlyList<T>! rows, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+WorkerKit.Sql.WorkerKitBulkCopy.WorkerKitBulkCopy(WorkerKit.Sql.IWorkerKitSqlDialect! dialect) -> void
+WorkerKit.Sql.WorkerKitConnectionFactory
+WorkerKit.Sql.WorkerKitConnectionFactory.OpenConnectionAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.ValueTask<System.Data.Common.DbConnection!>
+WorkerKit.Sql.WorkerKitConnectionFactory.WorkerKitConnectionFactory(WorkerKit.Sql.IWorkerKitSqlDialect! dialect, Microsoft.Extensions.Options.IOptionsMonitor<WorkerKit.Abstractions.Options.DataOptions!>! options) -> void
+WorkerKit.Sql.WorkerKitInsert
+WorkerKit.Sql.WorkerKitSql
+WorkerKit.Sql.WorkerKitSqlDialect
+WorkerKit.Sql.WorkerKitSqlDialect.AcquireSchemaLockAsync(System.Data.Common.DbConnection! connection, System.Data.Common.DbTransaction! transaction, string! schemaName, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+WorkerKit.Sql.WorkerKitSqlDialect.BooleanPredicate(string! column, string! parameterName) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BooleanTypeName.get -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildBulkInsertReturningIdsSql(string! destinationTable, string! stageTable, string! idColumn, System.Collections.Generic.IReadOnlyList<string!>! columns) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildClaimByIdSql(WorkerKit.Sql.WorkLeaseSql! lease) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildClaimSql(WorkerKit.Sql.WorkLeaseSql! lease) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildCountMatchedKeysSql(string! destinationTable, string! stageTable, System.Collections.Generic.IReadOnlyList<string!>! keyColumns) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildCountStagedKeysSql(string! stageTable, System.Collections.Generic.IReadOnlyList<string!>! keyColumns) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildCreateTemporaryTableSql(string! tableName, System.Collections.Generic.IReadOnlyList<WorkerKit.Sql.BulkColumnDefinition!>! columns) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildDropTemporaryTableSql(string! tableName) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildEnsureSchemaVersionTableSql() -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildGetSchemaVersionSql() -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildInsertIfMissingSql(WorkerKit.Sql.InsertIfMissingSql! insert) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildInsertMissingSql(string! destinationTable, string! stageTable, System.Collections.Generic.IReadOnlyList<string!>! columns, System.Collections.Generic.IReadOnlyList<string!>! keyColumns) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildRenewLeaseSql(WorkerKit.Sql.WorkLeaseSql! lease) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildReselectIdsSql(string! destinationTable, string! stageTable, string! idColumn, System.Collections.Generic.IReadOnlyList<string!>! keyColumns) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildSchemaLockSql() -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildSelectIdByKeySql(WorkerKit.Sql.InsertIfMissingSql! insert) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.BuildUpsertSchemaVersionSql() -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.Classify(System.Exception! exception) -> WorkerKit.Sql.WorkerKitSqlErrorKind
+WorkerKit.Sql.WorkerKitSqlDialect.CountExpression(string! alias = "Count") -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.CreateConnection(string! connectionString) -> System.Data.Common.DbConnection!
+WorkerKit.Sql.WorkerKitSqlDialect.CreateTemporaryTableName() -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.IsDeadlock(System.Exception! exception) -> bool
+WorkerKit.Sql.WorkerKitSqlDialect.IsTransient(System.Exception! exception) -> bool
+WorkerKit.Sql.WorkerKitSqlDialect.IsUniqueViolation(System.Exception! exception) -> bool
+WorkerKit.Sql.WorkerKitSqlDialect.ListPredicate(string! column, string! parameterName) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.Provider.get -> WorkerKit.Sql.WorkerKitSqlProvider
+WorkerKit.Sql.WorkerKitSqlDialect.QuoteAlias(string! alias) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.QuoteIdentifier(string! identifier) -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.RequiresDuplicateKeyRetry.get -> bool
+WorkerKit.Sql.WorkerKitSqlDialect.SplitBatches(string! script) -> System.Collections.Generic.IReadOnlyList<string!>!
+WorkerKit.Sql.WorkerKitSqlDialect.UtcNowExpression.get -> string!
+WorkerKit.Sql.WorkerKitSqlDialect.WorkerKitSqlDialect(WorkerKit.Sql.WorkerKitSqlProvider provider) -> void
+WorkerKit.Sql.WorkerKitSqlErrorKind
+WorkerKit.Sql.WorkerKitSqlErrorKind.Connection = 6 -> WorkerKit.Sql.WorkerKitSqlErrorKind
+WorkerKit.Sql.WorkerKitSqlErrorKind.Deadlock = 1 -> WorkerKit.Sql.WorkerKitSqlErrorKind
+WorkerKit.Sql.WorkerKitSqlErrorKind.LockTimeout = 2 -> WorkerKit.Sql.WorkerKitSqlErrorKind
+WorkerKit.Sql.WorkerKitSqlErrorKind.None = 0 -> WorkerKit.Sql.WorkerKitSqlErrorKind
+WorkerKit.Sql.WorkerKitSqlErrorKind.SerializationFailure = 5 -> WorkerKit.Sql.WorkerKitSqlErrorKind
+WorkerKit.Sql.WorkerKitSqlErrorKind.Timeout = 3 -> WorkerKit.Sql.WorkerKitSqlErrorKind
+WorkerKit.Sql.WorkerKitSqlErrorKind.UniqueViolation = 4 -> WorkerKit.Sql.WorkerKitSqlErrorKind
+WorkerKit.Sql.WorkerKitSqlProvider
+WorkerKit.Sql.WorkerKitSqlProvider.PostgreSql = 2 -> WorkerKit.Sql.WorkerKitSqlProvider
+WorkerKit.Sql.WorkerKitSqlProvider.SqlServer = 1 -> WorkerKit.Sql.WorkerKitSqlProvider
+WorkerKit.Sql.WorkerKitSqlServiceCollectionExtensions
+const WorkerKit.Sql.WorkerKitSqlDialect.SchemaVersionTableName = "worker_kit_schema_version" -> string!
+static WorkerKit.Sql.BulkColumn<T>.For<TValue>(string! name, System.Func<T, TValue>! value) -> WorkerKit.Sql.BulkColumn<T>!
+static WorkerKit.Sql.WorkerKitInsert.InsertIfMissingAsync(WorkerKit.Sql.IWorkerKitSqlDialect! dialect, System.Data.Common.DbConnection! connection, System.Data.Common.DbTransaction? transaction, WorkerKit.Sql.InsertIfMissingSql! insert, object! parameters, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<long?>!
+static WorkerKit.Sql.WorkerKitSql.CreateDialect(string? provider) -> WorkerKit.Sql.IWorkerKitSqlDialect!
+static WorkerKit.Sql.WorkerKitSql.TryParseProvider(string? provider, out WorkerKit.Sql.WorkerKitSqlProvider parsed) -> bool
+static WorkerKit.Sql.WorkerKitSqlDialect.AdvisoryLockKey(string! schemaName) -> (int Key1, int Key2)
+static WorkerKit.Sql.WorkerKitSqlDialect.ClassifyPostgreSqlState(string? sqlState) -> WorkerKit.Sql.WorkerKitSqlErrorKind
+static WorkerKit.Sql.WorkerKitSqlDialect.ClassifySqlServerError(int number) -> WorkerKit.Sql.WorkerKitSqlErrorKind
+static WorkerKit.Sql.WorkerKitSqlServiceCollectionExtensions.AddWorkerKitSql(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

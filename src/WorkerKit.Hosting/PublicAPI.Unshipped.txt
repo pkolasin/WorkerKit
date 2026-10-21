@@ -279,6 +279,8 @@ WorkerKit.Hosting.Workers.QueueWorker<T>
 WorkerKit.Hosting.Workers.QueueWorker<T>.Options.get -> Microsoft.Extensions.Options.IOptionsMonitor<WorkerKit.Abstractions.Options.QueueWorkerOptions!>!
 WorkerKit.Hosting.Workers.QueueWorker<T>.QueueWorker(WorkerKit.Hosting.Workers.WorkerContext! context, WorkerKit.Abstractions.Queues.IWorkQueue<T>! queue, Microsoft.Extensions.Options.IOptionsMonitor<WorkerKit.Abstractions.Options.QueueWorkerOptions!>! options) -> void
 WorkerKit.Hosting.Workers.QueueWorker<T>.RunBatchAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<WorkerKit.Hosting.Workers.WorkerIterationResult!>!
+WorkerKit.Hosting.Workers.Window
+WorkerKit.Hosting.Workers.Window.Window() -> void
 WorkerKit.Hosting.Workers.WorkerContext
 WorkerKit.Hosting.Workers.WorkerContext.CreateLogger(System.Type! category) -> Microsoft.Extensions.Logging.ILogger!
 WorkerKit.Hosting.Workers.WorkerContext.CreateLogger<TCategory>() -> Microsoft.Extensions.Logging.ILogger<TCategory>!
@@ -303,6 +305,7 @@ WorkerKit.Hosting.Workers.WorkerIterationStatus.Succeeded = 0 -> WorkerKit.Hosti
 abstract WorkerKit.Hosting.Workers.PeriodicWorker.Interval.get -> System.TimeSpan
 abstract WorkerKit.Hosting.Workers.PeriodicWorker.RunOnceAsync(System.IServiceProvider! services, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task<int>!
 abstract WorkerKit.Hosting.Workers.PeriodicWorker.WorkerName.get -> string!
+abstract WorkerKit.Hosting.Workers.Window.NextOccurrence(System.DateTimeOffset now) -> System.DateTimeOffset
 const WorkerKit.Hosting.Cli.ExitCodes.Error = 1 -> int
 const WorkerKit.Hosting.Cli.ExitCodes.Success = 0 -> int
 const WorkerKit.Hosting.Cli.Help.HostConfigurationNotes.Heading = "Host configuration overrides" -> string!
@@ -370,6 +373,8 @@ static WorkerKit.Hosting.Health.WorkerHeartbeatRules.Evaluate(WorkerKit.Abstract
 static WorkerKit.Hosting.Health.WorkerHeartbeatRules.Rank(Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus status) -> int
 static WorkerKit.Hosting.Health.WorkerHeartbeatRules.Worse(Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus current, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus candidate) -> Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus
 static WorkerKit.Hosting.Http.HttpClientRegistration.AddResilientJsonClient<TClient, TImplementation, TOptions>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! section) -> Microsoft.Extensions.DependencyInjection.IHttpClientBuilder!
+static WorkerKit.Hosting.Http.HttpClientRegistration.AddStreamingClient<TClient, TImplementation, TOptions>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! section) -> Microsoft.Extensions.DependencyInjection.IHttpClientBuilder!
+static WorkerKit.Hosting.Http.HttpClientRegistration.SendStreamingAsync(this System.Net.Http.HttpClient! client, System.Net.Http.HttpRequestMessage! request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage!>!
 static WorkerKit.Hosting.InstanceEnvironment.Create(WorkerKit.Hosting.InstanceLocation! location, string! installDirectory, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> WorkerKit.Hosting.InstanceEnvironment!
 static WorkerKit.Hosting.InstanceLocation.operator !=(WorkerKit.Hosting.InstanceLocation? left, WorkerKit.Hosting.InstanceLocation? right) -> bool
 static WorkerKit.Hosting.InstanceLocation.operator ==(WorkerKit.Hosting.InstanceLocation? left, WorkerKit.Hosting.InstanceLocation? right) -> bool
@@ -410,6 +415,8 @@ static WorkerKit.Hosting.WorkerHostBuilder.Create(string![]! args, string? conte
 static WorkerKit.Hosting.WorkerHostDefaults.ApplicationName.get -> string!
 static WorkerKit.Hosting.WorkerHostDefaults.ServiceName.get -> string!
 static WorkerKit.Hosting.WorkerHostDefaults.ServiceNameFor(string! instanceName) -> string!
+static WorkerKit.Hosting.Workers.Window.DailyAt(System.TimeOnly time, System.TimeZoneInfo! timeZone) -> WorkerKit.Hosting.Workers.Window!
 virtual WorkerKit.Hosting.Workers.PeriodicWorker.IsEnabled.get -> bool
 virtual WorkerKit.Hosting.Workers.PeriodicWorker.LogDisabled() -> void
 virtual WorkerKit.Hosting.Workers.PeriodicWorker.OnStartingAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+virtual WorkerKit.Hosting.Workers.PeriodicWorker.Window.get -> WorkerKit.Hosting.Workers.Window?

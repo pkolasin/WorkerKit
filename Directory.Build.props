@@ -16,7 +16,7 @@
 
   <!-- Set before the SDK reads GenerateDocumentationFile. Directory.Build.targets is too late: the SDK
        has already decided not to pass /doc. Samples, tests, ExampleHost, and the template package stay out. -->
-  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'WorkerKit.Abstractions' or '$(MSBuildProjectName)' == 'WorkerKit.Hosting' or '$(MSBuildProjectName)' == 'WorkerKit.Soap' or '$(MSBuildProjectName)' == 'WorkerKit.Testing'">
+  <PropertyGroup Condition="'$(MSBuildProjectName)' == 'WorkerKit.Abstractions' or '$(MSBuildProjectName)' == 'WorkerKit.Hosting' or '$(MSBuildProjectName)' == 'WorkerKit.Soap' or '$(MSBuildProjectName)' == 'WorkerKit.Sql' or '$(MSBuildProjectName)' == 'WorkerKit.Testing'">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <WarningsAsErrors>$(WarningsAsErrors);CS1591</WarningsAsErrors>
   </PropertyGroup>

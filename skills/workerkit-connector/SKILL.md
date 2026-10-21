@@ -14,7 +14,7 @@ dotnet new workerkit-connector -n Contoso.Billing -o ../Contoso.Billing
 
 `-n` is the namespace and product name (`^[A-Za-z][A-Za-z0-9]*(\.[A-Za-z][A-Za-z0-9]*)*$`). Optional: `--framework net8.0`, `--env-prefix`, `--queue`, `--docker false`, `--workerkit-version`.
 
-Packages: Hosting (host, workers, CLI), Abstractions (command and queue contracts), Testing (tests only), Soap (WCF binding helpers only). They multi-target `net8.0` and `net10.0`. A `net9.0` app uses the `net8.0` assets.
+Packages: Hosting (host, workers, CLI), Abstractions (command and queue contracts), Testing (tests only), Soap (WCF binding helpers only), Sql (optional SQL Server and PostgreSQL dialects, leases, bulk copy, and migrations). They multi-target `net8.0` and `net10.0`. A `net9.0` app uses the `net8.0` assets. Call `AddWorkerKitSql` for `Data:Provider` `SqlServer` or `PostgreSQL`. That value is read when the dialect is resolved. A large download uses `AddStreamingClient`.
 
 Rules that are easy to get wrong:
 

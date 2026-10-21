@@ -110,10 +110,19 @@ public sealed class CheckConfigHandler
             _output.WriteLine($"Health endpoints: {prefix}/ (all), {prefix}/live (liveness), {prefix}/ready (readiness)");
         }
 
-        if (string.Equals(_configuration[$"{DataOptions.SectionName}:Provider"], "Dapper", StringComparison.OrdinalIgnoreCase))
+        var provider = _configuration[$"{DataOptions.SectionName}:Provider"]?.Trim() ?? "";
+        if (provider.Equals(DataOptions.DapperProvider, StringComparison.OrdinalIgnoreCase))
         {
             _output.WriteLine(
                 "Data:Provider is Dapper. Register IDbConnectionFactory from ConfigureHost.");
+            _output.WriteLine("Data store readiness: /ready runs SELECT 1 through IDbConnectionFactory.");
+        }
+        else if (provider.Equals(DataOptions.SqlServerProvider, StringComparison.OrdinalIgnoreCase)
+            || provider.Equals(DataOptions.PostgreSqlProvider, StringComparison.OrdinalIgnoreCase)
+            || provider.Equals("Postgres", StringComparison.OrdinalIgnoreCase))
+        {
+            _output.WriteLine(
+                $"Data:Provider is {provider}. Call AddWorkerKitSql so the dialect and IDbConnectionFactory are resolved from this value.");
             _output.WriteLine("Data store readiness: /ready runs SELECT 1 through IDbConnectionFactory.");
         }
         else

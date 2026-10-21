@@ -10,6 +10,7 @@ namespace WorkerKit.Hosting.Workers;
 /// </summary>
 /// <remarks>
 /// The hosted loop waits on <see cref="WorkerContext.Time"/> between iterations.
+/// When <see cref="Window"/> is set, that wait is until the next occurrence instead of <see cref="Interval"/>.
 /// <see cref="NoOpWorkerIterationObserver"/> records nothing when the host has not replaced it.
 /// </remarks>
 /// <example>
@@ -62,8 +63,17 @@ public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
     /// <summary>Stable name used in health output, for example <c>open-meteo</c>.</summary>
     protected abstract string WorkerName { get; }
 
-    /// <summary>Delay after each iteration. Must be positive. Read on every iteration.</summary>
+    /// <summary>Delay after each iteration when <see cref="Window"/> is null. Must be positive. Read on every iteration.</summary>
     protected abstract TimeSpan Interval { get; }
+
+    /// <summary>
+    /// When non-null, the hosted loop waits until <see cref="Workers.Window.NextOccurrence"/> before each iteration
+    /// instead of waiting <see cref="Interval"/> after each iteration.
+    /// The heartbeat interval is the gap between two occurrences when that gap is longer than <see cref="Interval"/>.
+    /// <see cref="RunIterationAsync"/> does not wait.
+    /// </summary>
+    /// <remarks>The default is null, which keeps the interval delay. A daily window is <see cref="Workers.Window.DailyAt"/>.</remarks>
+    protected virtual Window? Window => null;
 
     /// <summary>
     /// When false, the hosted loop logs once and returns. It does not register a heartbeat,
@@ -104,7 +114,7 @@ public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
     /// <summary>
     /// Runs <see cref="OnStartingAsync"/> once for this instance, registers the heartbeat on the first call,
     /// runs <see cref="RunOnceAsync"/> once, and records the outcome.
-    /// Does not delay, and does not consult <see cref="IsEnabled"/>: a disabled worker still runs here.
+    /// Does not delay, does not wait for <see cref="Window"/>, and does not consult <see cref="IsEnabled"/>: a disabled worker still runs here.
     /// A later call does not register again, because registration resets the heartbeat, and does not run
     /// <see cref="OnStartingAsync"/> again.
     /// A non-positive <see cref="Interval"/> on the first call throws
@@ -155,8 +165,10 @@ public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
     /// <returns>A task that completes when the worker is disabled or the host stops it.</returns>
     /// <exception cref="InvalidOperationException"><see cref="Interval"/> is zero or negative when the heartbeat is first registered.</exception>
     /// <remarks>
-    /// After an iteration that was not abandoned, the loop waits for <see cref="Interval"/> on <see cref="WorkerContext.Time"/>.
+    /// When <see cref="Window"/> is null, the loop runs an iteration and then waits for <see cref="Interval"/> on <see cref="WorkerContext.Time"/>.
     /// A non-positive interval at that later read waits one second instead.
+    /// When <see cref="Window"/> is set, the loop waits until the next occurrence before each iteration, including the first, and does not also wait for <see cref="Interval"/>.
+    /// After an iteration, the following wait starts just after the occurrence that just ran, so a daily window does not run twice at the same instant.
     /// </remarks>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -171,23 +183,53 @@ public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
 
     private async Task RunLoopAsync(CancellationToken stoppingToken)
     {
+        if (Window is not null)
+        {
+            EnsureRegistered();
+        }
+
+        var skipCurrentOccurrence = false;
         while (!stoppingToken.IsCancellationRequested)
         {
+            if (Window is { } window)
+            {
+                var now = Context.Time.GetUtcNow();
+                var due = window.NextOccurrence(skipCurrentOccurrence ? now.AddTicks(1) : now);
+                var delay = due - now;
+                if (delay > TimeSpan.Zero)
+                {
+                    try
+                    {
+                        await Context.Time.Delay(delay, stoppingToken).ConfigureAwait(false);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        break;
+                    }
+                }
+            }
+
             var result = await RunIterationAsync(stoppingToken).ConfigureAwait(false);
             if (result.Status == WorkerIterationStatus.Abandoned)
             {
                 break;
             }
 
-            var delay = Interval;
-            if (delay <= TimeSpan.Zero)
+            if (Window is not null)
             {
-                delay = TimeSpan.FromSeconds(1);
+                skipCurrentOccurrence = true;
+                continue;
+            }
+
+            var idle = Interval;
+            if (idle <= TimeSpan.Zero)
+            {
+                idle = TimeSpan.FromSeconds(1);
             }
 
             try
             {
-                await Context.Time.Delay(delay, stoppingToken).ConfigureAwait(false);
+                await Context.Time.Delay(idle, stoppingToken).ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -221,13 +263,43 @@ public abstract class PeriodicWorker : BackgroundService, IWorkerIterations
             return;
         }
 
-        var interval = Interval;
-        if (interval <= TimeSpan.Zero)
+        TimeSpan interval;
+        try
+        {
+            interval = RegistrationInterval();
+        }
+        catch
         {
             Interlocked.Exchange(ref _registered, 0);
-            throw new InvalidOperationException($"Worker '{WorkerName}' interval must be positive.");
+            throw;
         }
 
         _heartbeat.Register(WorkerName, interval);
+    }
+
+    private TimeSpan RegistrationInterval()
+    {
+        var interval = Interval;
+        if (interval <= TimeSpan.Zero)
+        {
+            throw new InvalidOperationException($"Worker '{WorkerName}' interval must be positive.");
+        }
+
+        var window = Window;
+        if (window is null)
+        {
+            return interval;
+        }
+
+        var now = Context.Time.GetUtcNow();
+        var first = window.NextOccurrence(now);
+        if (first <= now)
+        {
+            first = window.NextOccurrence(now.AddTicks(1));
+        }
+
+        var second = window.NextOccurrence(first.AddTicks(1));
+        var gap = second - first;
+        return gap > interval ? gap : interval;
     }
 }

@@ -73,7 +73,9 @@ Commands and the host share one configuration stack and one DI container. The co
 
 ## Configuration and instances
 
-`Sample:Enabled` defaults to false. `Sample:ItemId` empty makes `SamplePollingWorker` log and skip HTTP. `SampleApi:BaseAddress` is `https://example.invalid/api/` until you replace it. Register a real client with `AddResilientJsonClient`. Do not call `new HttpClient()`.
+`Sample:Enabled` defaults to false. `Sample:ItemId` empty makes `SamplePollingWorker` log and skip HTTP. `SampleApi:BaseAddress` is `https://example.invalid/api/` until you replace it. Register a real client with `AddResilientJsonClient`. A large download uses `AddStreamingClient` and `SendStreamingAsync`, because the resilience handler buffers the body. Do not call `new HttpClient()`.
+
+`Data:Provider` `SqlServer` or `PostgreSQL` is read by `AddWorkerKitSql` (package WorkerKit.Sql) when the dialect is resolved, so a test `UseSetting` still selects the provider. `Dapper` means this connector registers `IDbConnectionFactory`. Map Dapper rows to a class with settable properties and cast `COUNT` to `int`.
 
 Later sources win: install `appsettings.json`, environment-specific JSON, instance JSON when the instance is not `default`, user secrets in Development, environment variables, then the command line. `run` and `check-config` also accept `--Section:Key value`. The content root is the install directory, not the process working directory.
 

@@ -208,7 +208,11 @@ WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Name.init -> void
 WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Registered.get -> System.DateTimeOffset
 WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.Registered.init -> void
 WorkerKit.Abstractions.Workers.WorkerHeartbeatSnapshot.WorkerHeartbeatSnapshot(string! Name, System.DateTimeOffset Registered, System.DateTimeOffset? LastSuccess, System.TimeSpan Interval, System.TimeSpan Grace, int ConsecutiveFailures, string? LastError) -> void
+const WorkerKit.Abstractions.Options.DataOptions.DapperProvider = "Dapper" -> string!
+const WorkerKit.Abstractions.Options.DataOptions.NoneProvider = "None" -> string!
+const WorkerKit.Abstractions.Options.DataOptions.PostgreSqlProvider = "PostgreSQL" -> string!
 const WorkerKit.Abstractions.Options.DataOptions.SectionName = "Data" -> string!
+const WorkerKit.Abstractions.Options.DataOptions.SqlServerProvider = "SqlServer" -> string!
 const WorkerKit.Abstractions.Options.HealthOptions.SectionName = "Health" -> string!
 const WorkerKit.Abstractions.Options.InstanceOptions.SectionName = "Instance" -> string!
 const WorkerKit.Abstractions.Options.LogFileOptions.SectionName = "LogFile" -> string!
