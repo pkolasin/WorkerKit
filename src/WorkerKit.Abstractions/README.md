@@ -6,7 +6,7 @@ Contracts for a WorkerKit connector:
 - worker heartbeats and iteration observers
 - `IInstanceContext`
 - `WorkerAppIdentity`
-- `IDbConnectionFactory` (no database implementation in this package)
+- `IDbConnectionFactory` (no database implementation in this package; `WorkerKit.Sql` registers one for `SqlServer` and `PostgreSQL`)
 - framework option types (`Health`, `Data`, `Instance`, `LogFile`, `Queue`, HTTP client endpoints)
 - reflection-free commands (`IWorkerCommand`, `CommandSpec`, `CommandOption<T>`, `CommandArgument<T>`, `EnumCommandOption<TEnum>`, `EnumCommandArgument<TEnum>`, `ICommandArgs`)
 
