@@ -1,4 +1,37 @@
+# Store text as LF. Checkout stays LF unless a pattern below sets eol,
+# so a clone is clean with any core.autocrlf.
 * text=auto eol=lf
-*.ps1 text eol=crlf
+
+# Windows scripts and Visual Studio solutions are CRLF on every platform.
 *.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.psm1 text eol=crlf
 *.sln text eol=crlf
+
+# Shell scripts stay LF.
+*.sh text eol=lf
+
+# Never rewrite binary files.
+*.7z binary
+*.dll binary
+*.eot binary
+*.exe binary
+*.gif binary
+*.gz binary
+*.ico binary
+*.jpeg binary
+*.jpg binary
+*.nupkg binary
+*.otf binary
+*.pdb binary
+*.pdf binary
+*.pfx binary
+*.png binary
+*.snk binary
+*.snupkg binary
+*.ttf binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.zip binary

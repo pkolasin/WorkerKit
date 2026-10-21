@@ -79,7 +79,14 @@ public class StampWorkerKitTemplate : Task
         Directory.CreateDirectory(destination);
         foreach (var directory in Directory.GetDirectories(source))
         {
-            CopyAll(directory, Path.Combine(destination, Path.GetFileName(directory)));
+            var name = Path.GetFileName(directory);
+            if (string.Equals(name, "bin", System.StringComparison.OrdinalIgnoreCase)
+                || string.Equals(name, "obj", System.StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            CopyAll(directory, Path.Combine(destination, name));
         }
 
         foreach (var file in Directory.GetFiles(source))
@@ -91,6 +98,14 @@ public class StampWorkerKitTemplate : Task
 ]]></Code>
     </Task>
   </UsingTask>
+
+  <!-- Solution Explorer only. Pack=false so this list does not replace StampTemplateContent,
+       which is what dotnet pack and dotnet new ship after the version token is replaced.
+       bin and obj under content are build output, not template source. -->
+  <ItemGroup>
+    <None Include="content/**" Exclude="content/**/bin/**;content/**/obj/**" Pack="false" />
+    <Compile Remove="content/**" />
+  </ItemGroup>
 
   <Target Name="StampTemplateContent" BeforeTargets="_GetPackageFiles">
     <StampWorkerKitTemplate SourceDirectory="$(MSBuildProjectDirectory)/content" DestinationDirectory="$(IntermediateOutputPath)template-content" Version="$(Version)" />
